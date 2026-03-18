@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Doom Company Are You? | 1490 DOOM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white:    #ffffff;
+  --muted:    #c9c5c3;
+  --red:      #be4127;
+  --red-glow: rgba(190,65,39,0.35);
+  --black:    #080808;
+  --surface:  rgba(255,255,255,0.05);
+  --border:   rgba(255,255,255,0.11);
+
+  --font-display: 'Cinzel', serif;
+  --font-heading: 'Lora', serif;
+  --font-body:    'Crimson Text', Georgia, serif;
+
+  --company-accent:     #be4127;
+  --company-accent-rgb: 190,65,39;
+  --speed: 400ms;
+  --max-w: 680px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+/* ─── Background System ─────────────────────────────────────────── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--black);
+  overflow: hidden;
+}
+
+/* Two art slots for crossfade */
+.bg-art {
+  position: absolute;
+  inset: 0;
+  background-color: #be4127;
+  background-size: cover;
+  background-position: center 35%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  z-index: 0;
+}
+.bg-art.active { opacity: 1; }
+
+/* Dark overlay */
+.bg-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(4, 2, 1, 0.72);
+}
+
+/* ─── Bottom Fog ────────────────────────────────────────────────── */
+.fog-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 33vh;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  filter: blur(2px) saturate(1.1) sepia(0.15);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
+  opacity: 1;
+  transition: opacity 600ms ease;
+}
+/* Hero: visible but halved opacity */
+.fog-bottom.fog-hero { opacity: 0.4; }
+/* Quiz: full opacity (default) */
+.fog-bottom.fog-quiz  { opacity: 1; }
+/* Result: hidden */
+.fog-bottom.fog-result { opacity: 0; pointer-events: none; }
+.fog-bottom .fog-layer {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+.fog-bottom .fog-layer .fog-img {
+  float: left;
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.fog-layer-1 { animation: fogMove 22s linear infinite; }
+.fog-layer-2 { animation: fogOpacity2 18s linear infinite, fogMove 16s linear infinite reverse; opacity: 0.6; }
+
+.fog-layer-1 .fog-img {
+  background-image: url("https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png");
+}
+.fog-layer-2 .fog-img {
+  background-image: url("https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png");
+}
+
+@keyframes fogMove {
+  0%   { left: 0; }
+  100% { left: -100%; }
+}
+@keyframes fogOpacity2 {
+  0%   { opacity: 0.3; }
+  40%  { opacity: 0.6; }
+  70%  { opacity: 0.2; }
+  100% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fog-bottom { display: none; }
+  .bg-art, .quiz-section, #question-container { transition: none !important; }
+}
+
+/* ─── App & Sections ────────────────────────────────────────────── */
+#app {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.quiz-section {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity var(--speed) ease, transform var(--speed) ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.quiz-section.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ─── Divider ───────────────────────────────────────────────────── */
+.doom-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0.15rem 0;
+}
+.doom-divider::before,
+.doom-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.11);
+}
+.doom-divider span { font-size: 0.6rem; opacity: 0.3; }
+
+/* ─── Buttons ───────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0.9rem 2.8rem;
+  background: var(--red);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 180ms, transform 100ms;
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+  background: #cc4e30;
+  outline: none;
+}
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.7rem 1.8rem;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 180ms, color 180ms;
+}
+.btn-ghost:hover, .btn-ghost:focus-visible {
+  border-color: rgba(255,255,255,0.45);
+  color: var(--white);
+  outline: none;
+}
+
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ─── HERO ──────────────────────────────────────────────────────── */
+.hero-content {
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.hero-logo {
+  width: clamp(260px, 55vw, 400px);
+  height: auto;
+  animation: fadeUp 0.9s ease both;
+}
+
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(0.62rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fadeUp 0.9s 0.15s ease both;
+}
+
+.hero-description {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: rgba(255,255,255,0.7);
+  max-width: 460px;
+  line-height: 1.8;
+  animation: fadeUp 0.9s 0.3s ease both;
+}
+
+.hero-cta { animation: fadeUp 0.9s 0.45s ease both; margin-top: 0.4rem; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── QUIZ ──────────────────────────────────────────────────────── */
+.quiz-wrapper {
+  max-width: var(--max-w);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Progress */
+.btn-back {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 150ms;
+  visibility: hidden;
+  white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+  z-index: 2;
+}
+.btn-back:hover { color: var(--white); }
+.btn-back.visible { visibility: visible; }
+
+.progress-area { display: flex; flex-direction: column; gap: 0.55rem; }
+
+.progress-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+}
+
+.progress-dots { display: flex; gap: 0.5rem; }
+
+.dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: background 300ms, border-color 300ms, transform 200ms;
+}
+.dot.completed { background: var(--red); border-color: var(--red); }
+.dot.current   { background: rgba(190,65,39,0.5); border-color: var(--red); transform: scale(1.2); }
+
+/* Question */
+#question-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  transition: opacity 200ms ease;
+}
+#question-container.fading { opacity: 0; }
+
+.question-text {
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 2.6vw, 1.45rem);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.45;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.95);
+}
+
+.answers-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.answer-btn {
+  min-height: 56px;
+  padding: 0.95rem 1.25rem;
+  background: rgba(4,4,4,0.78);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.88);
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2vw, 1.08rem);
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 2px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 160ms, border-color 160ms, transform 80ms;
+  -webkit-tap-highlight-color: transparent;
+}
+.answer-btn:hover, .answer-btn:focus-visible {
+  background: rgba(190,65,39,0.18);
+  border-color: rgba(190,65,39,0.55);
+  color: var(--white);
+  outline: none;
+}
+.answer-btn:active { transform: scale(0.99); }
+.answer-btn:disabled { cursor: default; pointer-events: none; }
+
+/* ─── RESULT ────────────────────────────────────────────────────── */
+#section-result {
+  align-items: flex-start;
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+.result-wrapper {
+  max-width: var(--max-w);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.result-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.result-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.9rem);
+  font-weight: 700;
+  color: var(--company-accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color var(--speed);
+}
+
+.result-rep-wrap {
+  width: 150px; height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--company-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--company-accent-rgb), 0.22);
+  border-radius: 50%;
+  padding: 0.9rem;
+  transition: background var(--speed), border-color var(--speed);
+}
+.result-rep-wrap img { width: 100%; height: 100%; object-fit: contain; }
+
+.result-tagline {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(0.95rem, 2.1vw, 1.1rem);
+  color: rgba(255,255,255,0.7);
+  max-width: 440px;
+  line-height: 1.68;
+}
+
+.result-mark {
+  width: 100%;
+  border-left: 3px solid var(--company-accent);
+  padding: 0.85rem 1.2rem;
+  background: rgba(8,8,8,0.5);
+  text-align: left;
+  border-radius: 0 2px 2px 0;
+  backdrop-filter: blur(4px);
+  transition: border-color var(--speed);
+}
+.mark-label {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--company-accent);
+  margin-bottom: 0.25rem;
+  transition: color var(--speed);
+}
+.mark-name {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.3rem;
+}
+.mark-description {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Warrior minis */
+.warrior-minis {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+.warrior-mini-card {
+  background: #be4127;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 110px;
+  height: 140px;
+  flex-shrink: 0;
+}
+.warrior-mini-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+}
+.warrior-mini-name {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.3rem;
+}
+
+.result-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+}
+.detail-block {
+  background: rgba(8,8,8,0.5);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 2px;
+  padding: 0.85rem 0.95rem;
+  backdrop-filter: blur(4px);
+}
+.detail-label {
+  font-family: var(--font-display);
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+.detail-value {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--white);
+  line-height: 1.55;
+}
+
+.result-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+/* ─── Buer Games Footer ─────────────────────────────────────────── */
+.site-footer {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.38;
+  transition: opacity 300ms;
+}
+.site-footer:hover { opacity: 0.65; }
+.site-footer img {
+  height: 72px;
+  width: auto;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  html, body { font-size: 16px; }
+  .quiz-section { padding: 1.5rem 1.1rem; }
+  .result-details { grid-template-columns: 1fr; }
+  #section-result { padding-top: 2rem; }
+  .result-rep-wrap { width: 120px; height: 120px; }
+  .site-footer { bottom: 1rem; right: 1rem; }
+  .site-footer img { height: 54px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-layer">
+  <div class="bg-art" id="bg-art-a"></div>
+  <div class="bg-art" id="bg-art-b"></div>
+  <div class="bg-cover"></div>
+</div>
+
+<!-- Bottom fog -->
+<div class="fog-bottom">
+  <div class="fog-layer fog-layer-1">
+    <div class="fog-img"></div>
+    <div class="fog-img"></div>
+  </div>
+  <div class="fog-layer fog-layer-2">
+    <div class="fog-img"></div>
+    <div class="fog-img"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+
+  <!-- ── HERO ── -->
+  <section id="section-hero" class="quiz-section active">
+    <div class="hero-content">
+      <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom" class="hero-logo">
+      <p class="hero-tagline">The world is dying. The Creeping Death consumes all life.</p>
+      <div class="doom-divider"><span>✦</span></div>
+      <p class="hero-description">The only escape is to climb. To fight. To scavenge what remains. Which Doom Company will you lead into the fog?</p>
+      <div class="hero-cta">
+        <button id="btn-start" class="btn-primary">Discover Your Doom Company</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUIZ ── -->
+  <section id="section-quiz" class="quiz-section">
+
+    <button id="btn-back" class="btn-back">&#8592; Back</button>
+
+    <div class="quiz-wrapper">
+
+      <div class="progress-area">
+        <span class="progress-label">Question <span id="q-num">1</span> of 5</span>
+        <div class="progress-dots">
+          <span class="dot current" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+          <span class="dot" data-index="3"></span>
+          <span class="dot" data-index="4"></span>
+        </div>
+      </div>
+
+      <div class="doom-divider"><span>✦</span></div>
+
+      <div id="question-container">
+        <h2 id="question-text" class="question-text"></h2>
+        <div id="answers-list" class="answers-grid"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── RESULT ── -->
+  <section id="section-result" class="quiz-section">
+    <div class="result-wrapper">
+      <p class="result-eyebrow">Your Doom Company Is</p>
+      <h2 id="result-name" class="result-name"></h2>
+
+      <div class="result-rep-wrap">
+        <img id="result-rep" src="" alt="">
+      </div>
+
+      <p id="result-tagline" class="result-tagline"></p>
+
+      <div class="doom-divider"><span>✦</span></div>
+
+      <div id="result-mark" class="result-mark">
+        <p class="mark-label">Company Mark</p>
+        <p id="mark-name" class="mark-name"></p>
+        <p id="mark-description" class="mark-description"></p>
+      </div>
+
+      <div class="warrior-minis" id="warrior-minis"></div>
+
+      <div class="result-details">
+        <div class="detail-block">
+          <p class="detail-label">Your Warriors</p>
+          <p id="result-warriors" class="detail-value"></p>
+        </div>
+        <div class="detail-block">
+          <p class="detail-label">Strategy</p>
+          <p id="result-strategy" class="detail-value"></p>
+        </div>
+        <div class="detail-block">
+          <p class="detail-label">Victory Path</p>
+          <p id="result-victory" class="detail-value"></p>
+        </div>
+      </div>
+
+      <div class="result-cta-group">
+        <a id="result-link" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer">
+          Build This Company
+        </a>
+        <button id="btn-restart" class="btn-ghost">Take the Quiz Again</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /app -->
+
+<!-- Buer Games branding -->
+<footer class="site-footer">
+  <img src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+
+const COMPANIES = [
+  {
+    id: 'graveborn',
+    name: 'The Graveborn',
+    accent: '#9B1010', accentRgb: '155,16,16',
+    rep: 'Art/Reps/Grave.png',
+    minis: ['Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/WarriorPriest.png'],
+    tagline: 'Born from ash and ruin. The last thing you do is strike, not scream.',
+    warriors: 'Fighter (The Reliable Blade) · Brute (The Breaking Point) · Warrior Priest (Faith in the Fog)',
+    markName: 'One final action when a warrior perishes',
+    markDescription: "Death is not the end. It's the last chance to take one of them with you.",
+    strategy: 'Deploy aggressively, make final actions count when warriors fall, accept casualties to secure victory.',
+    victoryPath: 'Attrition (1 VP)',
+    url: 'https://buergames.com/products/graveborn-company'
+  },
+  {
+    id: 'silent_pact',
+    name: 'The Silent Pact',
+    accent: '#2A7060', accentRgb: '42,112,96',
+    rep: 'Art/Reps/Silent.png',
+    minis: ['Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Sabotuer.png'],
+    tagline: "No orders. No shouting. Move like wolves. When you strike, it's already too late.",
+    warriors: 'Assassin (The Silent Blade) · Scavenger (The Resource Hunter) · Saboteur (The Chaos Architect)',
+    markName: 'One warrior uses 3 actions once per game',
+    markDescription: 'Perfect coordination. When the moment comes, you move as one.',
+    strategy: 'Strike fast and disengage, use traps to control movement, save 3-action burst for critical moments.',
+    victoryPath: 'High Ground (2 VP) + Resourceful (1 VP)',
+    url: 'https://buergames.com/products/the-silent-pact-complete-doom-company'
+  },
+  {
+    id: 'tower_born',
+    name: 'The Tower Born',
+    accent: '#4A6580', accentRgb: '74,101,128',
+    rep: 'Art/Reps/Tower.png',
+    minis: ['Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/DoomHunter.png','Art/Warrior_Minis/Knight.png'],
+    tagline: 'Raised in the stairwells of dead towers. Fear of falling left you long ago.',
+    warriors: 'Scout (The First to the Top) · Doom Hunter (The Elite Killer) · Knight (Shield of the Realm)',
+    markName: 'Roll two dice on Falling Damage, take lowest',
+    markDescription: "The fall doesn't scare you. You were born in the heights.",
+    strategy: 'Rush tallest structures, push enemies off aggressively, jump between structures fearlessly.',
+    victoryPath: 'High Ground (2 VP)',
+    url: 'https://buergames.com/products/tower-born-company'
+  },
+  {
+    id: 'ashbound',
+    name: 'The Ashbound',
+    accent: '#C97010', accentRgb: '201,112,16',
+    rep: 'Art/Reps/Ash.png',
+    minis: ['Art/Warrior_Minis/Blacksmith.png','Art/Warrior_Minis/WarriorPriest.png','Art/Warrior_Minis/Executioner.png'],
+    tagline: 'Lost something in the fire. Make the world remember where it burned.',
+    warriors: 'Blacksmith (The Equipment Master) · Warrior Priest (Guardian of the Hearth) · Executioner (Death in Sentence)',
+    markName: '+1 COMBAT within 2" of Hearth Token',
+    markDescription: 'Place the Hearth where something was lost. Defend it to the death.',
+    strategy: 'Force enemies to come to you, guard the Hearth strategically, fight on YOUR ground.',
+    victoryPath: 'Attrition (1 VP) + Resourceful (1 VP)',
+    url: 'https://buergames.com/products/ashbound-company'
+  },
+  {
+    id: 'wretched_survivors',
+    name: 'The Wretched Survivors',
+    accent: '#8A7870', accentRgb: '138,120,112',
+    rep: 'Art/Reps/Wretched.png',
+    minis: ['Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Fighter.png'],
+    tagline: "Don't know why you're alive. Scarred, limping, breathing. The strong fell ages ago.",
+    warriors: 'Scavenger (The Desperate Hoarder) · Scout (The Last Runner) · Fighter (The Stubborn One)',
+    markName: '+1 SKILL and +1 DEFENSE at 2 or less VITALITY',
+    markDescription: 'The more wounded you are, the harder you are to kill.',
+    strategy: 'Accept damage early to activate bonuses, wounded Scavengers excel at caches, survive and outlast.',
+    victoryPath: 'Resourceful (1 VP)',
+    url: 'https://buergames.com/products/wretched-survivors-company'
+  },
+  {
+    id: 'doomed_choir',
+    name: 'The Doomed Choir',
+    accent: '#9B3A14', accentRgb: '155,58,20',
+    rep: 'Art/Reps/Doomed.png',
+    minis: ['Art/Warrior_Minis/WarriorPriest.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/Beekeeper.png'],
+    tagline: 'Chant not to be heard, but to be feared. When echoes come, they break ribs.',
+    warriors: 'Warrior Priest (The Voice of Doom) · Brute (The Hammer of God) · Beekeeper (The Swarm Caller)',
+    markName: 'Debuff enemy (-1 COMBAT, -1 SKILL) when surrounded by 2+ warriors',
+    markDescription: 'Surround them. Chant. Watch them crumble under the weight of your hymn.',
+    strategy: 'Use swarm tactics to surround targets, activate debuffs, break enemy morale.',
+    victoryPath: 'Attrition (1 VP)',
+    url: 'https://buergames.com/products/doomed-choir-company'
+  },
+  {
+    id: 'fog_walkers',
+    name: 'The Fog Walkers',
+    accent: '#2A5878', accentRgb: '42,88,120',
+    rep: 'Art/Reps/Fog.png',
+    minis: ['Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Sabotuer.png','Art/Warrior_Minis/Beekeeper.png'],
+    tagline: "You don't walk through the fog. You walk with it. No one knows how you return from the depths.",
+    warriors: 'Assassin (The Mist Blade) · Saboteur (The Trap Layer) · Beekeeper (The Fog Swarm)',
+    markName: '+1 DEFENSE first check each round on Ground Level',
+    markDescription: 'Others fear the ground. You own it.',
+    strategy: 'Fight on ground level, trap low-elevation chokepoints, counter vertical meta.',
+    victoryPath: 'Attrition (1 VP)',
+    url: 'https://buergames.com/products/fog-walkers-company'
+  },
+  {
+    id: 'relic_bitten',
+    name: 'The Relic Bitten',
+    accent: '#A84E10', accentRgb: '168,78,16',
+    rep: 'Art/Reps/Relic.png',
+    minis: ['Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Blacksmith.png','Art/Warrior_Minis/DoomHunter.png'],
+    tagline: "Maps inked in blood. You don't search. You KNOW where the relics hide.",
+    warriors: 'Scavenger (The Relic Hunter) · Blacksmith (The Artificer) · Doom Hunter (The Elite Seeker)',
+    markName: 'Roll two dice when opening caches, choose result',
+    markDescription: 'You never get bad loot. The relics call to you.',
+    strategy: 'Open all 3 caches, guaranteed good loot with double rolls, modify equipment.',
+    victoryPath: 'Resourceful (1 VP)',
+    url: 'https://buergames.com/products/relic-bitten-company'
+  }
+];
+
+const QUESTIONS = [
+  {
+    text: "You enter a ruined castle. The fog is rising. Other warriors are closing in. What's your first move?",
+    art: 'Art/Bonus Art/Ruined Tower.png',
+    answers: [
+      { text: 'Climb to the highest point as fast as possible',          scores: { tower_born: 3, silent_pact: 2 } },
+      { text: 'Search the ruins for weapons and supplies',                scores: { relic_bitten: 3, wretched_survivors: 2 } },
+      { text: 'Find a defensible position and wait for them',             scores: { graveborn: 3, ashbound: 2 } },
+      { text: "Hide in the shadows and strike when they're vulnerable",   scores: { silent_pact: 3, fog_walkers: 2 } }
+    ]
+  },
+  {
+    text: 'A warrior on your team is dying. With their last breath, what do they do?',
+    art: 'Art/Bonus Art/DeadKnight.png',
+    answers: [
+      { text: 'Take one final swing at the enemy',                        scores: { graveborn: 4, ashbound: 2 } },
+      { text: 'Tell you where they hid something valuable',               scores: { relic_bitten: 4, wretched_survivors: 2 } },
+      { text: 'Give the signal for everyone to attack together',          scores: { silent_pact: 4, doomed_choir: 2 } },
+      { text: 'Disappear into the fog below',                             scores: { fog_walkers: 4, wretched_survivors: 2 } }
+    ]
+  },
+  {
+    text: 'You find an ancient chest hidden in the tower. What do you do with it?',
+    art: 'Art/Bonus Art/Throne_Room No Fog.png',
+    answers: [
+      { text: "Crack it open immediately — you need what's inside",       scores: { relic_bitten: 3, wretched_survivors: 2 } },
+      { text: "Guard it and open it when you're safe",                    scores: { ashbound: 3, graveborn: 2 } },
+      { text: 'Use it as bait to lure enemies into a trap',               scores: { silent_pact: 3, fog_walkers: 2 } },
+      { text: 'Ignore it — survival matters more than treasure',          scores: { tower_born: 3, doomed_choir: 2 } }
+    ]
+  },
+  {
+    text: "You're surrounded by enemies on all sides. How do you respond?",
+    art: 'Art/Bonus Art/Battle.png',
+    answers: [
+      { text: 'Form a circle and fight until the end',                    scores: { graveborn: 3, doomed_choir: 2 } },
+      { text: 'Break through and escape to regroup',                      scores: { silent_pact: 3, fog_walkers: 2 } },
+      { text: 'Climb up and attack from above',                           scores: { tower_born: 3, silent_pact: 2 } },
+      { text: 'Stand your ground — make them pay for every step',         scores: { ashbound: 3, graveborn: 2 } }
+    ]
+  },
+  {
+    text: 'When the battle ends and the bodies are counted, what defines victory for you?',
+    art: 'Art/Bonus Art/Standoff .png',
+    answers: [
+      { text: "You're standing on top of the highest tower",              scores: { tower_born: 3, silent_pact: 2 } },
+      { text: "You're the last one left alive",                           scores: { graveborn: 3, wretched_survivors: 2 } },
+      { text: 'You found the most valuable treasures',                    scores: { relic_bitten: 3, wretched_survivors: 2 } },
+      { text: "You survived when everyone said you wouldn't",             scores: { wretched_survivors: 4, fog_walkers: 2 } }
+    ]
+  }
+];
+
+// ── BG ART CROSSFADE ──────────────────────────────────────────────
+
+let bgSlot = 'a';
+
+function setBgArt(src) {
+  const next = bgSlot === 'a' ? 'b' : 'a';
+  const nextEl = document.getElementById(`bg-art-${next}`);
+  const curEl  = document.getElementById(`bg-art-${bgSlot}`);
+  nextEl.style.backgroundImage = `url("${src}")`;
+  nextEl.classList.add('active');
+  curEl.classList.remove('active');
+  bgSlot = next;
+}
+
+function clearBgArt() {
+  document.getElementById('bg-art-a').classList.remove('active');
+  document.getElementById('bg-art-b').classList.remove('active');
+}
+
+// ── STATE ─────────────────────────────────────────────────────────
+
+const state = { currentQuestion: 0, scores: {} };
+const answerHistory = [];
+
+function resetScores() { COMPANIES.forEach(c => { state.scores[c.id] = 0; }); }
+
+// ── UTILS ─────────────────────────────────────────────────────────
+
+function transitionTo(sectionId) {
+  document.querySelectorAll('.quiz-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+  const fog = document.querySelector('.fog-bottom');
+  fog.classList.remove('fog-hero', 'fog-quiz', 'fog-result');
+  if (sectionId === 'section-hero')   fog.classList.add('fog-hero');
+  else if (sectionId === 'section-quiz')   fog.classList.add('fog-quiz');
+  else if (sectionId === 'section-result') fog.classList.add('fog-result');
+}
+
+function updateProgress(index) {
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.remove('completed', 'current');
+    if (i < index) dot.classList.add('completed');
+    else if (i === index) dot.classList.add('current');
+  });
+  document.getElementById('q-num').textContent = index + 1;
+  document.getElementById('btn-back').classList.toggle('visible', answerHistory.length > 0);
+}
+
+function getWinner() {
+  let max = -1, winner = null;
+  for (const company of COMPANIES) {
+    if (state.scores[company.id] > max) {
+      max = state.scores[company.id];
+      winner = company;
+    }
+  }
+  return winner;
+}
+
+// ── QUIZ LOGIC ────────────────────────────────────────────────────
+
+function startQuiz() {
+  state.currentQuestion = 0;
+  answerHistory.length = 0;
+  resetScores();
+  transitionTo('section-quiz');
+  showQuestion(0);
+}
+
+function showQuestion(index) {
+  const container = document.getElementById('question-container');
+  updateProgress(index);
+
+  setBgArt(QUESTIONS[index].art);
+
+  // Fade question content out, swap, fade in
+  container.classList.add('fading');
+  setTimeout(() => {
+    const q = QUESTIONS[index];
+    document.getElementById('question-text').textContent = q.text;
+
+    const list = document.getElementById('answers-list');
+    list.innerHTML = '';
+    q.answers.forEach(answer => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = answer.text;
+      btn.addEventListener('click', () => handleAnswer(answer));
+      list.appendChild(btn);
+    });
+
+    container.classList.remove('fading');
+  }, 200);
+}
+
+function handleAnswer(answer) {
+  document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+  answerHistory.push({ questionIndex: state.currentQuestion, answer });
+  for (const [id, pts] of Object.entries(answer.scores)) {
+    state.scores[id] = (state.scores[id] || 0) + pts;
+  }
+  state.currentQuestion++;
+  if (state.currentQuestion < QUESTIONS.length) {
+    showQuestion(state.currentQuestion);
+  } else {
+    setTimeout(showResult, 220);
+  }
+}
+
+function goBack() {
+  if (answerHistory.length === 0) return;
+  const last = answerHistory.pop();
+  for (const [id, pts] of Object.entries(last.answer.scores)) {
+    state.scores[id] -= pts;
+  }
+  state.currentQuestion = last.questionIndex;
+  showQuestion(state.currentQuestion);
+}
+
+function showResult() {
+  const winner = getWinner();
+  if (!winner) return;
+
+  clearBgArt();
+  document.documentElement.style.setProperty('--company-accent', winner.accent);
+  document.documentElement.style.setProperty('--company-accent-rgb', winner.accentRgb);
+
+  document.getElementById('result-name').textContent = winner.name;
+  document.getElementById('result-tagline').textContent = winner.tagline;
+  document.getElementById('mark-name').textContent = winner.markName;
+  document.getElementById('mark-description').textContent = winner.markDescription;
+  document.getElementById('result-warriors').textContent = winner.warriors;
+  document.getElementById('result-strategy').textContent = winner.strategy;
+  document.getElementById('result-victory').textContent = winner.victoryPath;
+  document.getElementById('result-link').href = winner.url;
+
+  const repImg = document.getElementById('result-rep');
+  repImg.src = winner.rep;
+  repImg.alt = winner.name;
+
+  const minisEl = document.getElementById('warrior-minis');
+  minisEl.innerHTML = '';
+  const warriorNames = winner.warriors.split(' · ');
+  winner.minis.forEach((src, i) => {
+    const name = (warriorNames[i] || '').split(' (')[0];
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="warrior-mini-card"><img src="${src}" alt="${name}"></div><p class="warrior-mini-name">${name}</p>`;
+    minisEl.appendChild(wrap);
+  });
+
+  document.getElementById('result-mark').style.borderLeftColor = winner.accent;
+  document.querySelector('.mark-label').style.color = winner.accent;
+
+  transitionTo('section-result');
+  document.getElementById('section-result').scrollTop = 0;
+}
+
+function resetQuiz() {
+  state.currentQuestion = 0;
+  answerHistory.length = 0;
+  resetScores();
+  clearBgArt();
+  document.documentElement.style.setProperty('--company-accent', '#be4127');
+  document.documentElement.style.setProperty('--company-accent-rgb', '190,65,39');
+  transitionTo('section-hero');
+}
+
+// ── PRELOAD IMAGES ────────────────────────────────────────────────
+
+function preload() {
+  [...QUESTIONS.map(q => q.art), ...COMPANIES.map(c => c.rep)].forEach(src => {
+    new Image().src = src;
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+
+document.getElementById('btn-start').addEventListener('click', startQuiz);
+document.getElementById('btn-back').addEventListener('click', goBack);
+document.getElementById('btn-restart').addEventListener('click', resetQuiz);
+resetScores();
+preload();
+document.querySelector('.fog-bottom').classList.add('fog-hero');
+</script>
+</body>
+</html>
