@@ -91,8 +91,10 @@ html, body {
 .fog-bottom.fog-hero { opacity: 0.4; }
 /* Quiz: full opacity (default) */
 .fog-bottom.fog-quiz  { opacity: 1; }
-/* Result: hidden */
+/* Result: no page fog — fog lives inside each warrior card */
 .fog-bottom.fog-result { opacity: 0; pointer-events: none; }
+
+/* Result tower */
 .fog-bottom .fog-layer {
   position: absolute;
   width: 200%;
@@ -161,6 +163,7 @@ html, body {
   transform: translateY(0);
   pointer-events: auto;
 }
+#section-hero.active { cursor: pointer; }
 
 /* ─── Divider ───────────────────────────────────────────────────── */
 .doom-divider {
@@ -228,6 +231,11 @@ html, body {
   outline: none;
 }
 
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
 button:focus-visible, a:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
@@ -357,7 +365,7 @@ button:focus-visible, a:focus-visible {
 .answer-btn {
   min-height: 56px;
   padding: 0.95rem 1.25rem;
-  background: rgba(4,4,4,0.78);
+  background: rgba(4,4,4,0.92);
   border: 1px solid rgba(255,255,255,0.12);
   color: rgba(255,255,255,0.88);
   font-family: var(--font-body);
@@ -384,44 +392,66 @@ button:focus-visible, a:focus-visible {
 #section-result {
   align-items: flex-start;
   padding-top: 2.5rem;
-  padding-bottom: 3rem;
+  padding-bottom: 2rem;
+  min-height: 100vh;
 }
 
 .result-wrapper {
-  max-width: var(--max-w);
+  max-width: 960px;
   width: 100%;
+  min-height: calc(100vh - 4.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  text-align: center;
+}
+
+/* ── Rep + name + tagline row ── */
+.result-hero-row {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: 100%;
   text-align: center;
+}
+
+.result-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
 }
 
 .result-eyebrow {
   font-family: var(--font-display);
-  font-size: 0.65rem;
-  letter-spacing: 0.22em;
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .result-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 5vw, 2.9rem);
-  font-weight: 700;
+  font-family: var(--font-blackletter);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
   color: var(--company-accent);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.0;
   transition: color var(--speed);
 }
 
 .result-rep-wrap {
-  width: 150px; height: 150px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(var(--company-accent-rgb), 0.08);
-  border: 1px solid rgba(var(--company-accent-rgb), 0.22);
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--company-accent-rgb), 0.12);
+  border: 2px solid rgba(var(--company-accent-rgb), 0.35);
   border-radius: 50%;
-  padding: 0.9rem;
+  padding: 0.75rem;
   transition: background var(--speed), border-color var(--speed);
 }
 .result-rep-wrap img { width: 100%; height: 100%; object-fit: contain; }
@@ -429,140 +459,439 @@ button:focus-visible, a:focus-visible {
 .result-tagline {
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: clamp(0.95rem, 2.1vw, 1.1rem);
-  color: rgba(255,255,255,0.7);
-  max-width: 440px;
-  line-height: 1.68;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.65;
+  margin-top: 0.2rem;
 }
 
-.result-mark {
+/* ── Two-column body ── */
+.result-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
   width: 100%;
-  border-left: 3px solid var(--company-accent);
-  padding: 0.85rem 1.2rem;
-  background: rgba(8,8,8,0.5);
-  text-align: left;
-  border-radius: 0 2px 2px 0;
-  backdrop-filter: blur(4px);
-  transition: border-color var(--speed);
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
-.mark-label {
-  font-family: var(--font-display);
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--company-accent);
-  margin-bottom: 0.25rem;
-  transition: color var(--speed);
-}
-.mark-name {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--white);
-  margin-bottom: 0.3rem;
-}
-.mark-description {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-/* Warrior minis */
-.warrior-minis {
+.result-right-col {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 1rem;
+  height: 100%;
+  min-height: 0;
+}
+.result-right-col .result-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.result-right-col .result-card .result-card-body {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ── Warriors section ── */
+.result-warriors-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.result-warriors-section .warrior-list {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(6,3,1,0.6);
+  backdrop-filter: blur(4px);
+  gap: 0.6rem;
+}
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.warrior-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
   width: 100%;
+  flex: 1;
+}
+.warrior-card {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  background: rgba(6,3,1,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+  min-height: 0;
 }
 .warrior-mini-card {
   background: #be4127;
-  border-radius: 16px;
-  overflow: hidden;
-  width: 110px;
-  height: 140px;
+  width: 45%;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.warrior-mini-card > div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.warrior-mini-card .card-tower {
+  z-index: 1;
+  background-repeat: no-repeat;
+  opacity: 0.35;
+}
+.warrior-mini-card .card-dark {
+  z-index: 2;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(4,2,1,0.55) 50%,
+    rgba(4,2,1,0.85) 100%);
+}
+.warrior-mini-card .card-fog-1 {
+  z-index: 3;
+  background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x center bottom / 200% auto;
+  opacity: 0.85;
+  animation: cardFog1 10s linear infinite;
+}
+.warrior-mini-card .card-fog-2 {
+  z-index: 3;
+  background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x center bottom / 200% auto;
+  opacity: 0.75;
+  animation: cardFog2 15s linear infinite reverse;
+}
+@keyframes cardFog1 {
+  from { background-position: 0% bottom; }
+  to   { background-position: 200% bottom; }
+}
+@keyframes cardFog2 {
+  from { background-position: 200% bottom; }
+  to   { background-position: 0% bottom; }
 }
 .warrior-mini-card img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
   display: block;
+  z-index: 4;
 }
-.warrior-mini-name {
-  font-family: var(--font-display);
-  font-size: 0.5rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
-  margin-top: 0.3rem;
-}
-
-.result-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.6rem;
-  width: 100%;
+.warrior-card-text {
+  flex: 1;
+  padding: 0.6rem 0.75rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
   text-align: left;
 }
-.detail-block {
-  background: rgba(8,8,8,0.5);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 2px;
-  padding: 0.85rem 0.95rem;
-  backdrop-filter: blur(4px);
-}
-.detail-label {
-  font-family: var(--font-display);
-  font-size: 0.56rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.4rem;
-}
-.detail-value {
-  font-family: var(--font-body);
+.warrior-row-name {
+  font-family: var(--font-heading);
   font-size: 0.9rem;
+  font-weight: 600;
   color: var(--white);
-  line-height: 1.55;
+  line-height: 1.2;
+}
+.warrior-row-desc {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
 }
 
-.result-cta-group {
+/* ── Shared result card style ── */
+.result-card {
+  width: 100%;
+  background: rgba(6,3,1,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+  text-align: left;
+}
+.result-card-header {
+  background: #be4127;
+  padding: 0.45rem 0.85rem;
+}
+.result-card-header-label {
+  font-family: var(--font-blackletter);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.95);
+}
+.result-card-body {
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* ── Company ability ── */
+.mark-name {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+}
+.mark-description {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Playstyle ── */
+.result-playstyle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.playstyle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.playstyle-label {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+.playstyle-value {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+/* ── Bottom CTA ── */
+.result-cta-bottom {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
-  margin-top: 0.4rem;
+  gap: 1rem;
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-top: auto;
+}
+.result-cta-bottom .btn-primary {
+  width: 100%;
+  min-height: 64px;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+}
+.btn-restart-link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 150ms;
+}
+.btn-restart-link:hover { color: var(--white); }
+
+/* ─── Audio widget ──────────────────────────────────────────────── */
+.audio-widget {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 2rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+/* Expanded panel — revealed on hover */
+.audio-expanded {
+  background: rgba(10,6,4,0.88);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem 0.55rem;
+  backdrop-filter: blur(8px);
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.audio-widget:hover .audio-expanded {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Play + Mute row */
+.audio-controls-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.audio-ctrl-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: color 150ms, background 150ms;
+  flex-shrink: 0;
+}
+.audio-ctrl-btn:hover {
+  color: var(--white);
+  background: rgba(255,255,255,0.13);
+}
+.audio-ctrl-btn:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* Scrubber */
+.scrubber-times {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.45);
+}
+.scrubber-track {
+  position: relative;
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+  cursor: pointer;
+}
+.scrubber-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--red);
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+}
+.scrubber-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: var(--white);
+  border-radius: 50%;
+  left: 0%;
+  pointer-events: none;
+  transition: transform 100ms;
+}
+.scrubber-track:hover .scrubber-thumb {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Main circular button */
+.audio-main-btn {
+  background: rgba(10,6,4,0.72);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: color 150ms, background 150ms, border-color 150ms;
+  backdrop-filter: blur(6px);
+}
+.audio-main-btn:hover {
+  color: var(--white);
+  background: rgba(20,10,6,0.88);
+  border-color: rgba(255,255,255,0.3);
+}
+.audio-main-btn:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* Loading spinner inside main button */
+.audio-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: rgba(255,255,255,0.65);
+  border-radius: 50%;
+  animation: audioSpin 0.75s linear infinite;
+}
+@keyframes audioSpin {
+  to { transform: rotate(360deg); }
 }
 
 /* ─── Buer Games Footer ─────────────────────────────────────────── */
 .site-footer {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 1.25rem;
   right: 2rem;
   z-index: 10;
   pointer-events: none;
-  opacity: 0.38;
+  opacity: 0.6;
   transition: opacity 300ms;
 }
-.site-footer:hover { opacity: 0.65; }
+.site-footer:hover { opacity: 0.9; }
 .site-footer img {
-  height: 72px;
+  height: 88px;
   width: auto;
+  filter: brightness(1.4);
+  display: block;
 }
 
 /* ─── Responsive ────────────────────────────────────────────────── */
+
+/* Shrink logo before it can overlap the mute button */
+@media (max-width: 480px) {
+  .site-footer img { height: 60px; }
+}
+@media (max-width: 360px) {
+  .site-footer { right: 1rem; }
+  .site-footer img { height: 48px; }
+}
+
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  .result-details { grid-template-columns: 1fr; }
   #section-result { padding-top: 2rem; }
-  .result-rep-wrap { width: 120px; height: 120px; }
+  .result-rep-wrap { width: 90px; height: 90px; }
+  .result-two-col { grid-template-columns: 1fr; }
   .site-footer { bottom: 1rem; right: 1rem; }
-  .site-footer img { height: 54px; }
+  .site-footer img { height: 68px; }
 }
 </style>
 </head>
@@ -573,6 +902,41 @@ button:focus-visible, a:focus-visible {
   <div class="bg-art" id="bg-art-a"></div>
   <div class="bg-art" id="bg-art-b"></div>
   <div class="bg-cover"></div>
+</div>
+
+<!-- Audio -->
+<audio id="bg-audio" loop preload="auto" src="Music/track.mp3"></audio>
+
+<!-- Audio widget -->
+<div class="audio-widget" id="audio-widget">
+  <!-- Expanded panel (hover) -->
+  <div class="audio-expanded" id="audio-expanded">
+    <div class="audio-controls-row">
+      <button id="btn-play-pause" class="audio-ctrl-btn" aria-label="Play music">
+        <svg id="icon-pp-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pp-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button id="btn-mute" class="audio-ctrl-btn" aria-label="Mute music">
+        <svg id="icon-sound" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <svg id="icon-mute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z"/></svg>
+      </button>
+    </div>
+    <div class="scrubber-times">
+      <span id="scrubber-current">0:00</span>
+      <span id="scrubber-total">0:00</span>
+    </div>
+    <div class="scrubber-track" id="scrubber-track">
+      <div class="scrubber-fill" id="scrubber-fill"></div>
+      <div class="scrubber-thumb" id="scrubber-thumb"></div>
+    </div>
+  </div>
+  <!-- Main button: shows idle/spinner/play/pause -->
+  <button id="btn-audio-main" class="audio-main-btn" aria-label="Play music">
+    <div class="audio-spinner" id="audio-spinner"></div>
+    <svg id="icon-main-music" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+    <svg id="icon-main-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+    <svg id="icon-main-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+  </button>
 </div>
 
 <!-- Bottom fog -->
@@ -634,46 +998,67 @@ button:focus-visible, a:focus-visible {
   <!-- ── RESULT ── -->
   <section id="section-result" class="quiz-section">
     <div class="result-wrapper">
-      <p class="result-eyebrow">Your Doom Company Is</p>
-      <h2 id="result-name" class="result-name"></h2>
 
-      <div class="result-rep-wrap">
-        <img id="result-rep" src="" alt="">
-      </div>
-
-      <p id="result-tagline" class="result-tagline"></p>
-
-      <div class="doom-divider"><span>✦</span></div>
-
-      <div id="result-mark" class="result-mark">
-        <p class="mark-label">Company Mark</p>
-        <p id="mark-name" class="mark-name"></p>
-        <p id="mark-description" class="mark-description"></p>
-      </div>
-
-      <div class="warrior-minis" id="warrior-minis"></div>
-
-      <div class="result-details">
-        <div class="detail-block">
-          <p class="detail-label">Your Warriors</p>
-          <p id="result-warriors" class="detail-value"></p>
+      <!-- Rep + company name + tagline -->
+      <div class="result-hero-row">
+        <p class="result-eyebrow">Your Doom Company Is</p>
+        <div class="result-name-row">
+          <div class="result-rep-wrap">
+            <img id="result-rep" src="" alt="">
+          </div>
+          <h2 id="result-name" class="result-name"></h2>
         </div>
-        <div class="detail-block">
-          <p class="detail-label">Strategy</p>
-          <p id="result-strategy" class="detail-value"></p>
-        </div>
-        <div class="detail-block">
-          <p class="detail-label">Victory Path</p>
-          <p id="result-victory" class="detail-value"></p>
-        </div>
+        <p id="result-tagline" class="result-tagline"></p>
       </div>
 
-      <div class="result-cta-group">
-        <a id="result-link" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer">
-          Build This Company
-        </a>
-        <button id="btn-restart" class="btn-ghost">Take the Quiz Again</button>
+      <!-- Two-column body -->
+      <div class="result-two-col">
+
+        <!-- Left: warriors -->
+        <div class="result-warriors-section">
+          <div class="result-card-header" style="flex-shrink:0;">
+            <span class="result-card-header-label">Your Warriors</span>
+          </div>
+          <div id="warrior-minis" class="warrior-list"></div>
+        </div>
+
+        <!-- Right: ability + strategy + victory -->
+        <div class="result-right-col">
+          <div id="result-mark" class="result-card">
+            <div class="result-card-header">
+              <span class="result-card-header-label">Special Ability</span>
+            </div>
+            <div class="result-card-body">
+              <p id="mark-name" class="mark-name"></p>
+              <p id="mark-description" class="mark-description"></p>
+            </div>
+          </div>
+          <div class="result-card">
+            <div class="result-card-header">
+              <span class="result-card-header-label">Strategy</span>
+            </div>
+            <div class="result-card-body">
+              <span id="result-strategy" class="playstyle-value"></span>
+            </div>
+          </div>
+          <div class="result-card">
+            <div class="result-card-header">
+              <span class="result-card-header-label">Victory Path</span>
+            </div>
+            <div class="result-card-body">
+              <span id="result-victory" class="playstyle-value"></span>
+            </div>
+          </div>
+        </div>
+
       </div>
+
+      <!-- Bottom CTA -->
+      <div class="result-cta-bottom">
+        <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <button id="btn-restart" class="btn-restart-link">Not your style? Take the quiz again</button>
+      </div>
+
     </div>
   </section>
 
@@ -888,7 +1273,7 @@ function transitionTo(sectionId) {
   document.getElementById(sectionId).classList.add('active');
   const fog = document.querySelector('.fog-bottom');
   fog.classList.remove('fog-hero', 'fog-quiz', 'fog-result');
-  if (sectionId === 'section-hero')   fog.classList.add('fog-hero');
+  if (sectionId === 'section-hero')        fog.classList.add('fog-hero');
   else if (sectionId === 'section-quiz')   fog.classList.add('fog-quiz');
   else if (sectionId === 'section-result') fog.classList.add('fog-result');
 }
@@ -982,14 +1367,17 @@ function showResult() {
   document.documentElement.style.setProperty('--company-accent', winner.accent);
   document.documentElement.style.setProperty('--company-accent-rgb', winner.accentRgb);
 
+  // Short name for CTA (strip "The ")
+  const shortName = winner.name.replace(/^The /, '');
+
   document.getElementById('result-name').textContent = winner.name;
+  document.getElementById('result-link-2').textContent = `Get The ${shortName}`;
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
-  document.getElementById('result-warriors').textContent = winner.warriors;
   document.getElementById('result-strategy').textContent = winner.strategy;
   document.getElementById('result-victory').textContent = winner.victoryPath;
-  document.getElementById('result-link').href = winner.url;
+  document.getElementById('result-link-2').href = winner.url;
 
   const repImg = document.getElementById('result-rep');
   repImg.src = winner.rep;
@@ -997,16 +1385,35 @@ function showResult() {
 
   const minisEl = document.getElementById('warrior-minis');
   minisEl.innerHTML = '';
-  const warriorNames = winner.warriors.split(' · ');
+  const warriorEntries = winner.warriors.split(' · ');
   winner.minis.forEach((src, i) => {
-    const name = (warriorNames[i] || '').split(' (')[0];
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `<div class="warrior-mini-card"><img src="${src}" alt="${name}"></div><p class="warrior-mini-name">${name}</p>`;
-    minisEl.appendChild(wrap);
+    const raw = warriorEntries[i] || '';
+    const match = raw.match(/^(.+?)\s*\((.+)\)$/);
+    const name = match ? match[1] : raw;
+    const desc = match ? match[2] : '';
+    const card = document.createElement('div');
+    card.className = 'warrior-card';
+    const towerStyles = [
+      'background-image:url(Art/Bonus%20Art/Ruined%20Tower.png); background-position:20% 60%; background-size:160%;',
+      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:center 40%; background-size:140%;',
+      'background-image:url(Art/Bonus%20Art/Push.png); background-position:center bottom; background-size:100% 300%;',
+    ];
+    const tStyle = towerStyles[i % towerStyles.length];
+    card.innerHTML = `
+      <div class="warrior-mini-card">
+        <div class="card-tower" style="${tStyle}"></div>
+        <div class="card-dark"></div>
+        <div class="card-fog-1"></div>
+        <div class="card-fog-2"></div>
+        <img src="${src}" alt="${name}">
+      </div>
+      <div class="warrior-card-text">
+        <span class="warrior-row-name">${name}</span>
+        <span class="warrior-row-desc">${desc}</span>
+      </div>`;
+    minisEl.appendChild(card);
   });
 
-  document.getElementById('result-mark').style.borderLeftColor = winner.accent;
-  document.querySelector('.mark-label').style.color = winner.accent;
 
   transitionTo('section-result');
   document.getElementById('section-result').scrollTop = 0;
@@ -1033,11 +1440,116 @@ function preload() {
 // ── INIT ──────────────────────────────────────────────────────────
 
 document.getElementById('btn-start').addEventListener('click', startQuiz);
+document.getElementById('section-hero').addEventListener('click', function(e) {
+  if (this.classList.contains('active')) startQuiz();
+});
 document.getElementById('btn-back').addEventListener('click', goBack);
 document.getElementById('btn-restart').addEventListener('click', resetQuiz);
 resetScores();
 preload();
 document.querySelector('.fog-bottom').classList.add('fog-hero');
+
+// ── Audio widget ─────────────────────────────────────────────────
+const audio         = document.getElementById('bg-audio');
+const btnAudioMain  = document.getElementById('btn-audio-main');
+const btnPlayPause  = document.getElementById('btn-play-pause');
+const btnMute       = document.getElementById('btn-mute');
+const audioSpinner  = document.getElementById('audio-spinner');
+const iconMainPlay  = document.getElementById('icon-main-play');
+const iconMainPause = document.getElementById('icon-main-pause');
+const iconPpPlay    = document.getElementById('icon-pp-play');
+const iconPpPause   = document.getElementById('icon-pp-pause');
+const iconSound     = document.getElementById('icon-sound');
+const iconMute      = document.getElementById('icon-mute');
+const scrubTrack    = document.getElementById('scrubber-track');
+const scrubFill     = document.getElementById('scrubber-fill');
+const scrubThumb    = document.getElementById('scrubber-thumb');
+const scrubCurrent  = document.getElementById('scrubber-current');
+const scrubTotal    = document.getElementById('scrubber-total');
+
+audio.volume = 0.45;
+let audioReady = false;
+
+function setMainState(state) {
+  // state: 'loading' | 'playing' | 'paused'
+  audioSpinner.style.display  = state === 'loading' ? '' : 'none';
+  iconMainPlay.style.display  = state === 'paused'  ? '' : 'none';
+  iconMainPause.style.display = state === 'playing' ? '' : 'none';
+}
+
+function setPpState(playing) {
+  iconPpPlay.style.display  = playing ? 'none' : '';
+  iconPpPause.style.display = playing ? ''     : 'none';
+}
+
+// Start in loading state — audio has src set and preload="auto"
+setMainState('loading');
+
+audio.addEventListener('canplay', () => {
+  audioReady = true;
+  if (audio.paused) setMainState('paused');
+});
+
+btnAudioMain.addEventListener('click', () => {
+  if (!audioReady) return;
+  if (audio.paused) { audio.play().catch(() => {}); }
+  else              { audio.pause(); }
+});
+
+btnPlayPause.addEventListener('click', () => {
+  if (!audioReady) return;
+  if (audio.paused) { audio.play().catch(() => {}); }
+  else              { audio.pause(); }
+});
+
+audio.addEventListener('play', () => {
+  setMainState('playing');
+  setPpState(true);
+  btnAudioMain.setAttribute('aria-label', 'Pause music');
+  btnPlayPause.setAttribute('aria-label', 'Pause music');
+});
+
+audio.addEventListener('pause', () => {
+  setMainState('paused');
+  setPpState(false);
+  btnAudioMain.setAttribute('aria-label', 'Play music');
+  btnPlayPause.setAttribute('aria-label', 'Play music');
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  scrubTotal.textContent = fmtTime(audio.duration);
+});
+
+function fmtTime(s) {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = String(Math.floor(s % 60)).padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  scrubFill.style.width    = pct + '%';
+  scrubThumb.style.left    = pct + '%';
+  scrubCurrent.textContent = fmtTime(audio.currentTime);
+});
+
+function seekTo(e) {
+  const rect = scrubTrack.getBoundingClientRect();
+  const pct  = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+  if (audio.duration) audio.currentTime = pct * audio.duration;
+}
+let dragging = false;
+scrubTrack.addEventListener('mousedown', e => { dragging = true; seekTo(e); });
+document.addEventListener('mousemove',  e => { if (dragging) seekTo(e); });
+document.addEventListener('mouseup',    () => { dragging = false; });
+
+btnMute.addEventListener('click', () => {
+  audio.muted = !audio.muted;
+  iconSound.style.display = audio.muted ? 'none' : '';
+  iconMute.style.display  = audio.muted ? ''     : 'none';
+});
 </script>
 </body>
 </html>
