@@ -652,7 +652,7 @@ button:focus-visible, a:focus-visible {
   width: 100%;
   flex: 1;
   min-height: 0;
-  background: transparent !important;
+  background: #111 center/cover no-repeat; /* fallback; JS overrides per-card with AnaSky.jpg */
   flex-shrink: 0;
   position: relative;
   overflow: visible;
@@ -1776,8 +1776,8 @@ function showResult() {
     ];
     const tStyle = towerStyles[i % towerStyles.length];
     card.innerHTML = `
-      <div class="warrior-mini-card">
-        <div class="card-tower" style="${tStyle}"></div>
+      <div class="warrior-mini-card" style="${tStyle}">
+        <div class="card-tower"></div>
         <div class="card-dark"></div>
         <div class="card-fog-1"></div>
         <div class="card-fog-2"></div>
