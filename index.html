@@ -597,6 +597,15 @@ button:focus-visible, a:focus-visible {
   color: var(--white);
   line-height: 1.2;
 }
+.warrior-row-title {
+  display: block;
+  height: 22px;
+  width: auto;
+  max-width: 90%;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
 .warrior-row-desc {
   font-family: var(--font-body);
   font-style: italic;
@@ -1384,6 +1393,22 @@ function showResult() {
   repImg.src = winner.rep;
   repImg.alt = winner.name;
 
+  const TITLE_IMGS = {
+    'Fighter':       'Art/TITLES/Fighter.png',
+    'Brute':         'Art/TITLES/Brute.png',
+    'Reaver':        'Art/TITLES/Reaver%20Text.png',
+    'Assassin':      'Art/TITLES/Assassin.png',
+    'Scavenger':     'Art/TITLES/Scavenger.png',
+    'Saboteur':      'Art/TITLES/Saboteur.png',
+    'Scout':         'Art/TITLES/Scout.png',
+    'Doom Hunter':   'Art/TITLES/Doomhunter%20Txt.png',
+    'Knight':        'Art/TITLES/Knight.png',
+    'Blacksmith':    'Art/TITLES/Blacksmith%20Txt.png',
+    'Warrior Priest':'Art/TITLES/WarriorP.png',
+    'Executioner':   'Art/TITLES/Executioner%20Orange.png',
+    'Beekeeper':     'Art/TITLES/Beekeeper%20Txt.png',
+  };
+
   const minisEl = document.getElementById('warrior-minis');
   minisEl.innerHTML = '';
   const warriorEntries = winner.warriors.split(' · ');
@@ -1392,6 +1417,7 @@ function showResult() {
     const match = raw.match(/^(.+?)\s*\((.+)\)$/);
     const name = match ? match[1] : raw;
     const desc = match ? match[2] : '';
+    const titleSrc = TITLE_IMGS[name];
     const card = document.createElement('div');
     card.className = 'warrior-card';
     const towerStyles = [
@@ -1400,6 +1426,9 @@ function showResult() {
       'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:80% 40%; background-size:cover;',
     ];
     const tStyle = towerStyles[i % towerStyles.length];
+    const nameEl = titleSrc
+      ? `<img class="warrior-row-title" src="${titleSrc}" alt="${name}">`
+      : `<span class="warrior-row-name">${name}</span>`;
     card.innerHTML = `
       <div class="warrior-mini-card">
         <div class="card-tower" style="${tStyle}"></div>
@@ -1409,7 +1438,7 @@ function showResult() {
         <img src="${src}" alt="${name}">
       </div>
       <div class="warrior-card-text">
-        <span class="warrior-row-name">${name}</span>
+        ${nameEl}
         <span class="warrior-row-desc">${desc}</span>
       </div>`;
     minisEl.appendChild(card);
