@@ -438,8 +438,32 @@ button:focus-visible, a:focus-visible {
 #section-result {
   align-items: stretch;
   justify-content: flex-start;
-  padding: 1.5rem 2rem 1rem;
+  padding: 1.5rem 2rem 6.5rem; /* bottom clears sticky footer */
   overflow: hidden;
+  /* Full battlefield atmosphere */
+  background-color: #be4127;
+  background-image: url('Art/Bonus%20Art/Battlefield.png');
+  background-size: cover;
+  background-position: center 35%;
+}
+#section-result::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(4,2,1,0.78) 0%, rgba(4,2,1,0.86) 60%, rgba(4,2,1,0.95) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+#section-result::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png')
+    repeat-x center bottom / 200% auto;
+  opacity: 0.5;
+  animation: cardFog1 20s linear infinite;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .result-wrapper {
@@ -452,6 +476,8 @@ button:focus-visible, a:focus-visible {
   align-items: center;
   gap: 0.65rem;
   text-align: center;
+  position: relative;
+  z-index: 2; /* above ::before / ::after on #section-result */
 }
 
 /* ── Rep + name + tagline row ── */
@@ -547,9 +573,7 @@ button:focus-visible, a:focus-visible {
   gap: 0;
   flex: 1;
   min-height: 0;
-  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.08);
 }
 .result-warriors-section .warrior-list {
   flex-direction: row;
@@ -557,33 +581,7 @@ button:focus-visible, a:focus-visible {
   min-height: 0;
   gap: 0;
   padding: 0.75rem 0 0;
-  position: relative;
-  background-color: #be4127;
-  background-image: var(--warrior-panel-bg);
-  background-size: cover;
-  background-position: center 35%;
-}
-.result-warriors-section .warrior-list::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom,
-    rgba(4,2,1,0.82) 0%,
-    rgba(4,2,1,0.88) 55%,
-    rgba(4,2,1,0.97) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-.result-warriors-section .warrior-list::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png')
-    repeat-x center bottom / 200% auto;
-  opacity: 0.75;
-  animation: cardFog1 20s linear infinite;
-  pointer-events: none;
-  z-index: 3;
+  background: transparent;
 }
 .section-label {
   font-family: var(--font-display);
@@ -792,37 +790,62 @@ button:focus-visible, a:focus-visible {
   line-height: 1.6;
 }
 
-/* ── Bottom CTA ── */
-.result-cta-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.6rem 5rem 0;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  flex-shrink: 0;
-}
+/* ── Sticky result footer ── */
 @keyframes ctaGlow {
   0%, 100% { box-shadow: 0 0 0 1px rgba(240,235,226,0.25), 0 0 20px rgba(240,235,226,0.07), 0 4px 18px rgba(0,0,0,0.45); }
      50%    { box-shadow: 0 0 0 1px rgba(240,235,226,0.45), 0 0 36px rgba(240,235,226,0.16), 0 4px 18px rgba(0,0,0,0.45); }
 }
-.result-cta-bottom .btn-primary {
+.result-sticky-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 20;
+  background: rgba(4,2,1,0.90);
+  border-top: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 0.8rem 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+.result-sticky-footer.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.result-sticky-footer-main {
   width: 100%;
-  min-height: 52px;
-  font-size: 0.9rem;
+  max-width: 680px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.result-sticky-footer .btn-primary {
+  flex: 1;
+  min-height: 48px;
+  font-size: 0.85rem;
   letter-spacing: 0.14em;
-  /* Cream/parchment — high contrast against the dark orange result page */
   background: #f0ebe2;
   color: #1a0a04;
-  border-radius: 2px;
   animation: ctaGlow 3s ease-in-out infinite;
 }
-.result-cta-bottom .btn-primary:hover,
-.result-cta-bottom .btn-primary:focus-visible {
+.result-sticky-footer .btn-primary:hover,
+.result-sticky-footer .btn-primary:focus-visible {
   background: #fff9f4;
   transform: translateY(-1px);
 }
+.footer-buer-logo {
+  height: 52px;
+  width: auto;
+  opacity: 0.65;
+  flex-shrink: 0;
+  display: block;
+  transition: opacity 200ms;
+}
+.footer-buer-logo:hover { opacity: 0.9; }
 .btn-restart-link {
   background: none;
   border: none;
@@ -1028,9 +1051,11 @@ button:focus-visible, a:focus-visible {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
   #section-result {
-    padding: 1.25rem 1.1rem 1rem;
+    padding: 1.25rem 1.1rem 6.5rem;
     overflow-y: auto;
   }
+  .result-sticky-footer { padding: 0.65rem 1.25rem 0.85rem; }
+  .result-sticky-footer-main { max-width: 100%; }
   .result-wrapper { height: auto; gap: 0.8rem; }
   .btn-back {
     top: 1.25rem;
@@ -1051,8 +1076,6 @@ button:focus-visible, a:focus-visible {
   /* Warriors: fixed height image strip on small screens */
   .warrior-mini-card { flex: none; height: 130px; }
 
-  /* CTA button: narrower padding on mobile since icons are smaller */
-  .result-cta-bottom { padding-left: 3.75rem; padding-right: 3.75rem; }
 }
 
 /* ─── Desktop: full-width stacked layout ───────────────────────── */
@@ -1105,7 +1128,8 @@ button:focus-visible, a:focus-visible {
 
   /* Bottom row: side-by-side (already the default, keep it) */
   .result-bottom-row { gap: 1rem; }
-  .result-cta-bottom { gap: 1rem; padding-top: 1rem; }
+  /* Desktop result section — leave room for sticky footer */
+  #section-result { padding-bottom: 6.5rem; }
 }
 </style>
 </head>
@@ -1269,21 +1293,25 @@ button:focus-visible, a:focus-visible {
         </div>
       </div>
 
-      <!-- Bottom CTA -->
-      <div class="result-cta-bottom">
-        <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
-        <button id="btn-restart" class="btn-restart-link">Not your style? Take the quiz again</button>
-      </div>
 
     </div>
   </section>
 
 </div><!-- /app -->
 
-<!-- Buer Games branding -->
+<!-- Buer Games branding (hero + quiz pages) -->
 <footer class="site-footer">
   <img src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
 </footer>
+
+<!-- Sticky result footer: CTA + Buer logo + restart -->
+<div class="result-sticky-footer" id="result-sticky-footer">
+  <div class="result-sticky-footer-main">
+    <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
+    <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
+  </div>
+  <button id="btn-restart" class="btn-restart-link">Not your style? Take the quiz again</button>
+</div>
 
 <!-- 1490 DOOM logo — top right, visible after hero -->
 <div class="doom-logo-corner" id="doom-logo-corner">
@@ -1499,6 +1527,7 @@ function transitionTo(sectionId) {
   else if (sectionId === 'section-result') fog.classList.add('fog-result');
   document.querySelector('.bg-cover').classList.toggle('bg-cover-result', sectionId === 'section-result');
   document.getElementById('doom-logo-corner').classList.toggle('visible', sectionId !== 'section-hero');
+  document.getElementById('result-sticky-footer').classList.toggle('visible', sectionId === 'section-result');
 }
 
 function updateProgress(index) {
