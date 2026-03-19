@@ -879,12 +879,12 @@ button:focus-visible, a:focus-visible {
 /* Buy button — equal flex with restart, both same width */
 .footer-cta .btn-primary {
   flex: 1;
-  max-width: 200px;
+  max-width: 215px;
   min-width: 0;
   min-height: 40px;
   padding: 0.4rem 1.0rem;
   font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.09em; /* reduced from 0.14em — 18-char "Claim Your Company" needs breathing room */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -902,7 +902,7 @@ button:focus-visible, a:focus-visible {
 /* "TRY AGAIN" ghost button — equal flex with buy button, always same width */
 .btn-restart-link {
   flex: 1;
-  max-width: 200px;
+  max-width: 215px;
   min-width: 0;
   min-height: 40px;
   display: flex;
@@ -1770,9 +1770,9 @@ function showResult() {
     const card = document.createElement('div');
     card.className = 'warrior-card';
     const towerStyles = [
-      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:20% 40%; background-size:cover;',
-      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:center 40%; background-size:cover;',
-      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:80% 40%; background-size:cover;',
+      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:20% 40%; background-size:cover;',
+      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:center 40%; background-size:cover;',
+      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:80% 40%; background-size:cover;',
     ];
     const tStyle = towerStyles[i % towerStyles.length];
     card.innerHTML = `
