@@ -438,7 +438,9 @@ button:focus-visible, a:focus-visible {
 #section-result {
   align-items: stretch;
   justify-content: flex-start;
-  padding: 1.5rem 2rem 6.5rem; /* bottom clears sticky footer */
+  padding: 1.5rem 2rem 1.5rem;
+  /* Section ends at footer top so scrollbar track never runs behind it */
+  bottom: 6.5rem;
   overflow: hidden;
   /* Full battlefield atmosphere */
   background-color: #be4127;
@@ -1069,7 +1071,8 @@ button:focus-visible, a:focus-visible {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
   #section-result {
-    padding: 1.25rem 1.1rem 6.5rem;
+    padding: 1.25rem 1.1rem 1.5rem;
+    bottom: 6.5rem;
     overflow-y: auto;
   }
   .result-sticky-footer { padding: 0.65rem 1.25rem 0.85rem; }
@@ -1147,8 +1150,8 @@ button:focus-visible, a:focus-visible {
 
   /* Bottom row: side-by-side (already the default, keep it) */
   .result-bottom-row { gap: 1rem; }
-  /* Desktop result section — leave room for sticky footer */
-  #section-result { padding-bottom: 6.5rem; }
+  /* Desktop: section ends at footer top, scrollbar clears the bar */
+  #section-result { padding-bottom: 1.5rem; bottom: 6.5rem; }
 }
 </style>
 </head>
