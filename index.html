@@ -456,6 +456,8 @@ button:focus-visible, a:focus-visible {
   z-index: 2;
   width: 100%;
   height: 100%;
+  min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
+                    expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   display: flex;
@@ -1235,6 +1237,17 @@ button:focus-visible, a:focus-visible {
 
   /* Bottom row tighter gaps */
   .result-bottom-row { gap: 0.65rem; }
+}
+
+/* ─── Phone landscape (any phone rotated sideways, ~375–500px tall) ──────
+   The fix above (min-height:0) makes scroll work; this just tightens padding
+   so the first card isn't half-buried under the header on a 390px screen.
+   Content will scroll — that's expected and fine on a phone in landscape. */
+@media (max-height: 500px) and (min-width: 500px) {
+  .result-scroll-inner {
+    padding: 3rem 1.2rem 3.5rem; /* 3rem top clears doom logo corner (~44px); 3.5rem bottom clears footer */
+  }
+  .result-wrapper { gap: 0.4rem; }
 }
 </style>
 </head>
