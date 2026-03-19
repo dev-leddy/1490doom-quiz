@@ -1517,6 +1517,13 @@ setMainState('loading');
 // Stop retrying once audio actually starts
 audio.addEventListener('play', () => { autoplayPending = false; });
 
+// If audio fails to load (404, codec error, etc.) — don't leave spinner forever
+audio.addEventListener('error', () => {
+  audioReady = false;
+  setMainState('paused');
+  autoplayPending = false;
+});
+
 // Handle both: canplay fires after registration (normal) and already-ready state (cached)
 audio.addEventListener('canplay', onAudioReady);
 if (audio.readyState >= 3) onAudioReady();
