@@ -437,16 +437,18 @@ button:focus-visible, a:focus-visible {
 /* ─── RESULT ────────────────────────────────────────────────────── */
 #section-result {
   padding: 0;
-  inset: 0; /* explicit: fills full viewport on all sides */
-  min-height: 100vh; /* belt-and-suspenders — bg never leaves a gap */
+  inset: 0;
+  min-height: 100dvh; /* dynamic viewport height — accounts for mobile browser chrome */
   overflow: hidden; /* always hidden so ::before/::after never scroll away */
   align-items: stretch;
   justify-content: flex-start;
-  /* Full battlefield atmosphere */
+  /* Full battlefield atmosphere — attachment:fixed pins bg to viewport,
+     never leaves gaps from sub-pixel height rounding or zoom levels */
   background-color: #be4127;
   background-image: url('Art/Bonus%20Art/Battlefield.png');
   background-size: cover;
   background-position: center 35%;
+  background-attachment: fixed;
 }
 /* Scroll lives here — section stays still so fog/overlay never drift */
 .result-scroll-inner {
@@ -861,7 +863,7 @@ button:focus-visible, a:focus-visible {
 }
 .footer-cta .btn-primary {
   flex: 1;
-  max-width: 220px;
+  min-width: max-content; /* always wide enough for the longest company name */
   min-height: 44px;
   font-size: 0.85rem;
   letter-spacing: 0.14em;
@@ -879,7 +881,6 @@ button:focus-visible, a:focus-visible {
 .footer-buer-logo:hover { opacity: 0.9; }
 .btn-restart-link {
   flex: 1;
-  max-width: 200px;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -1065,6 +1066,13 @@ button:focus-visible, a:focus-visible {
 
 /* ─── Responsive ────────────────────────────────────────────────── */
 
+/* Tablet + mobile: footer wraps into 2 rows so buttons get a full-width row */
+@media (max-width: 900px) {
+  .app-footer { flex-wrap: wrap; gap: 0.4rem 0.75rem; }
+  .app-footer .doom-logo-corner { order: 2; }
+  .footer-buer-logo { order: 3; margin-left: auto; }
+  .footer-cta { order: 1; flex-basis: 100%; width: 100%; }
+}
 
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
