@@ -469,7 +469,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: clamp(3.5rem, 5vh, 4.5rem) 2rem 3.5rem;
+  padding: clamp(2rem, 3.5vh, 3rem) 2rem 3.5rem; /* logos top-right only — less top clearance needed */
   box-sizing: border-box;
 }
 #section-result::before {
@@ -930,14 +930,29 @@ button:focus-visible, a:focus-visible {
 }
 
 /* ── Unified app footer ── */
+/* Top-right logo stack — DOOM logo above, Buer logo below */
+.top-logos {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  padding: 0.65rem 1rem;
+  pointer-events: none; /* container pass-through */
+}
+.top-logos a { pointer-events: auto; }
+
 .app-footer {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 20;
   display: flex;
   align-items: center;
+  justify-content: center; /* center the CTA — logos gone */
   padding: 0.5rem 1.5rem;
-  gap: 1rem;
   background: transparent;
   transition: background 400ms ease;
   pointer-events: none; /* pass-through on non-result pages */
@@ -956,9 +971,8 @@ button:focus-visible, a:focus-visible {
   opacity: 0.9;
 }
 
-/* CTA center: hidden until result page */
+/* CTA: hidden until result page */
 .footer-cta {
-  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1077,10 +1091,9 @@ button:focus-visible, a:focus-visible {
 
 
 .doom-logo-corner {
-  flex-shrink: 0;
-  pointer-events: none;
   opacity: 0;
   transition: opacity 400ms ease;
+  display: block;
 }
 .doom-logo-corner.visible { opacity: 0.75; }
 .doom-logo-corner img {
@@ -1128,14 +1141,16 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  /* Single-row footer is ~52px; bottom pad just needs to clear it */
-  .result-scroll-inner { padding: 4.5rem 1.1rem 3.5rem; }
-  /* Compact single-row footer on mobile */
-  .app-footer { padding: 0.4rem 0.9rem; gap: 0.4rem; }
-  .footer-buer-logo { height: 28px; }
+  /* Bottom pad clears fixed footer buttons; top is minimal (logos are top-right, not full-width) */
+  .result-scroll-inner { padding: 1.5rem 1.1rem 3.5rem; }
+  /* Compact footer — buttons only */
+  .app-footer { padding: 0.4rem 0.9rem; }
   .footer-cta .btn-primary { font-size: 0.65rem; padding: 0.35rem 0.75rem; }
   .btn-restart-link { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
-  .doom-logo-corner img { height: 32px; }
+  /* Shrink top-right logos on mobile */
+  .top-logos { padding: 0.5rem 0.75rem; gap: 0.2rem; }
+  .doom-logo-corner img { height: 28px; }
+  .footer-buer-logo { height: 22px; }
   .result-wrapper { gap: 0.8rem; }
   /* Audio widget top-left — match mobile padding */
   .audio-widget { top: 1rem; left: 1.1rem; }
@@ -1372,23 +1387,22 @@ button:focus-visible, a:focus-visible {
   </button>
 </div>
 
-<!-- Footer: DOOM logo (left) · CTA (center, result only) · Buer logo (right) -->
-<footer class="app-footer" id="app-footer">
-  <!-- Left: 1490 DOOM logo, visible after hero -->
+<!-- Top-right: stacked logos — DOOM on top, Buer below -->
+<div class="top-logos" id="top-logos">
   <a class="doom-logo-corner" id="doom-logo-corner" href="https://buergames.com/pages/1490doom" target="_blank" rel="noopener noreferrer">
     <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
   </a>
+  <a href="https://buergames.com/" target="_blank" rel="noopener noreferrer" class="footer-buer-logo-link">
+    <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
+  </a>
+</div>
 
-  <!-- Center: buy CTA (visible on result page only) -->
+<!-- Footer: CTA buttons only (result page) -->
+<footer class="app-footer" id="app-footer">
   <div class="footer-cta" id="footer-cta">
     <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
     <button id="btn-restart" class="btn-restart-link">Seek Another Path</button>
   </div>
-
-  <!-- Right: Buer Games logo -->
-  <a href="https://buergames.com/" target="_blank" rel="noopener noreferrer" class="footer-buer-logo-link">
-    <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
-  </a>
 </footer>
 
 <script>
