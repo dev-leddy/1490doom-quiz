@@ -466,31 +466,14 @@ button:focus-visible, a:focus-visible {
 }
 
 /* ── Two-column body ── */
-.result-two-col {
+.result-ability-card {
+  width: 100%;
+}
+.result-bottom-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  width: 100%;
-  align-items: stretch;
-  flex: 1;
-  min-height: 0;
-}
-.result-right-col {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
-  height: 100%;
-  min-height: 0;
-}
-.result-right-col .result-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-.result-right-col .result-card .result-card-body {
-  flex: 1;
-  justify-content: center;
+  width: 100%;
 }
 
 /* ── Warriors section ── */
@@ -498,8 +481,7 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 0;
-  height: 100%;
-  min-height: 0;
+  width: 100%;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
@@ -537,7 +519,7 @@ button:focus-visible, a:focus-visible {
   min-height: 0;
 }
 .warrior-mini-card {
-  background: #be4127;
+  background: #8B2E1A;
   width: 45%;
   flex-shrink: 0;
   position: relative;
@@ -551,7 +533,7 @@ button:focus-visible, a:focus-visible {
 .warrior-mini-card .card-tower {
   z-index: 1;
   background-repeat: no-repeat;
-  opacity: 0.35;
+  opacity: 0.45;
 }
 .warrior-mini-card .card-dark {
   z-index: 2;
@@ -898,7 +880,7 @@ button:focus-visible, a:focus-visible {
     left: 1.1rem;
   }
   .result-rep-wrap { width: 90px; height: 90px; }
-  .result-two-col { grid-template-columns: 1fr; }
+  .result-bottom-row { grid-template-columns: 1fr; }
   .site-footer { bottom: 1rem; right: 1rem; }
   .site-footer img { height: 68px; }
 
@@ -1092,46 +1074,43 @@ button:focus-visible, a:focus-visible {
         <p id="result-tagline" class="result-tagline"></p>
       </div>
 
-      <!-- Two-column body -->
-      <div class="result-two-col">
-
-        <!-- Left: warriors -->
-        <div class="result-warriors-section">
-          <div class="result-card-header" style="flex-shrink:0;">
-            <span class="result-card-header-label">Your Warriors</span>
-          </div>
-          <div id="warrior-minis" class="warrior-list"></div>
+      <!-- Special Ability — full width -->
+      <div id="result-mark" class="result-card result-ability-card">
+        <div class="result-card-header">
+          <span class="result-card-header-label">Special Ability</span>
         </div>
+        <div class="result-card-body">
+          <p id="mark-name" class="mark-name"></p>
+          <p id="mark-description" class="mark-description"></p>
+        </div>
+      </div>
 
-        <!-- Right: ability + strategy + victory -->
-        <div class="result-right-col">
-          <div id="result-mark" class="result-card">
-            <div class="result-card-header">
-              <span class="result-card-header-label">Special Ability</span>
-            </div>
-            <div class="result-card-body">
-              <p id="mark-name" class="mark-name"></p>
-              <p id="mark-description" class="mark-description"></p>
-            </div>
+      <!-- Warriors — full width -->
+      <div class="result-warriors-section">
+        <div class="result-card-header" style="flex-shrink:0;">
+          <span class="result-card-header-label">Your Warriors</span>
+        </div>
+        <div id="warrior-minis" class="warrior-list"></div>
+      </div>
+
+      <!-- Strategy + Victory Path — side by side -->
+      <div class="result-bottom-row">
+        <div class="result-card">
+          <div class="result-card-header">
+            <span class="result-card-header-label">Strategy</span>
           </div>
-          <div class="result-card">
-            <div class="result-card-header">
-              <span class="result-card-header-label">Strategy</span>
-            </div>
-            <div class="result-card-body">
-              <span id="result-strategy" class="playstyle-value"></span>
-            </div>
-          </div>
-          <div class="result-card">
-            <div class="result-card-header">
-              <span class="result-card-header-label">Victory Path</span>
-            </div>
-            <div class="result-card-body">
-              <span id="result-victory" class="playstyle-value"></span>
-            </div>
+          <div class="result-card-body">
+            <span id="result-strategy" class="playstyle-value"></span>
           </div>
         </div>
-
+        <div class="result-card">
+          <div class="result-card-header">
+            <span class="result-card-header-label">Victory Path</span>
+          </div>
+          <div class="result-card-body">
+            <span id="result-victory" class="playstyle-value"></span>
+          </div>
+        </div>
       </div>
 
       <!-- Bottom CTA -->
@@ -1475,9 +1454,9 @@ function showResult() {
     const card = document.createElement('div');
     card.className = 'warrior-card';
     const towerStyles = [
-      'background-image:url(Art/Bonus%20Art/Ruined%20Tower.png); background-position:20% 60%; background-size:160%;',
-      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:center 40%; background-size:140%;',
-      'background-image:url(Art/Bonus%20Art/Push.png); background-position:center bottom; background-size:100% 300%;',
+      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:20% 40%; background-size:cover;',
+      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:center 40%; background-size:cover;',
+      'background-image:url(Art/Bonus%20Art/Battlefield.png); background-position:80% 40%; background-size:cover;',
     ];
     const tStyle = towerStyles[i % towerStyles.length];
     card.innerHTML = `
