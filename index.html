@@ -924,12 +924,14 @@ button:focus-visible, a:focus-visible {
     pointer-events: none;
     z-index: 1;
   }
-  /* Each warrior: equal column, transparent — floats on shared bg, no dividers */
+  /* Each warrior: equal column — strip all card chrome */
   .warrior-card {
     flex: 1;
     flex-direction: column;
     background: transparent;
     border: none;
+    backdrop-filter: none;
+    overflow: visible;
     position: relative;
     z-index: 2;
   }
