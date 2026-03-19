@@ -948,7 +948,13 @@ button:focus-visible, a:focus-visible {
   -webkit-backdrop-filter: blur(14px);
 }
 /* Buer logo always clickable */
-.footer-buer-logo { pointer-events: auto; }
+.footer-buer-logo-link { 
+  pointer-events: auto; 
+  display: block;
+}
+.footer-buer-logo-link:hover .footer-buer-logo {
+  opacity: 0.9;
+}
 
 /* CTA center: hidden until result page */
 .footer-cta {
@@ -1480,9 +1486,9 @@ button:focus-visible, a:focus-visible {
 <!-- Footer: DOOM logo (left) · CTA (center, result only) · Buer logo (right) -->
 <footer class="app-footer" id="app-footer">
   <!-- Left: 1490 DOOM logo, visible after hero -->
-  <div class="doom-logo-corner" id="doom-logo-corner">
+  <a class="doom-logo-corner" id="doom-logo-corner" href="https://buergames.com/pages/1490doom" target="_blank" rel="noopener noreferrer">
     <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
-  </div>
+  </a>
 
   <!-- Center: buy CTA (visible on result page only) -->
   <div class="footer-cta" id="footer-cta">
@@ -1491,7 +1497,9 @@ button:focus-visible, a:focus-visible {
   </div>
 
   <!-- Right: Buer Games logo -->
-  <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
+  <a href="https://buergames.com/" target="_blank" rel="noopener noreferrer" class="footer-buer-logo-link">
+    <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
+  </a>
 </footer>
 
 <script>
