@@ -574,6 +574,12 @@ button:focus-visible, a:focus-visible {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  /* Glass panel — matches result-card treatment */
+  background: rgba(6,3,1,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .result-warriors-section .warrior-list {
   flex-direction: row;
@@ -603,12 +609,13 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   background: transparent;
-  border: none;
+  border-right: 1px solid rgba(255,255,255,0.07);
   overflow: visible;
   backdrop-filter: none;
   position: relative;
   z-index: 4;
 }
+.warrior-card:last-child { border-right: none; }
 /* Per-card layers all hidden — container handles bg, gradient, fog */
 .warrior-mini-card .card-tower,
 .warrior-mini-card .card-dark,
@@ -636,6 +643,15 @@ button:focus-visible, a:focus-visible {
   from { background-position: 200% bottom; }
   to   { background-position: 0% bottom; }
 }
+.warrior-mini-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(4,2,1,0.65) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
 .warrior-mini-card img {
   position: absolute;
   inset: 0;
@@ -653,8 +669,9 @@ button:focus-visible, a:focus-visible {
   gap: 0.15rem;
   text-align: center;
   position: relative;
-  z-index: 4;
+  z-index: 6;
   overflow: hidden;
+  background: rgba(4,2,1,0.45);
 }
 .warrior-row-name {
   font-family: var(--font-heading);
