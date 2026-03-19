@@ -762,11 +762,11 @@ button:focus-visible, a:focus-visible {
 /* ── Company ability ── */
 .result-ability-body {
   flex-direction: column !important;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 0.8rem;
   flex: 1;
-  text-align: center;
+  text-align: left;
 }
 .mark-logo {
   width: 80px;
@@ -779,7 +779,7 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  text-align: center;
+  text-align: left;
 }
 .mark-name {
   font-family: var(--font-heading);
@@ -1073,6 +1073,39 @@ button:focus-visible, a:focus-visible {
   display: block;
 }
 
+/* ── Result cards-area: invisible wrapper on normal viewports ───── */
+.result-cards-area {
+  display: contents; /* transparent to layout — children slot directly into result-wrapper's flex */
+  width: 100%;
+}
+
+/* ── Tall viewport: hero in top 1/3, cards in bottom 2/3 ─────────
+   Triggers on very tall screens (iPad portrait 1366px, large monitors).
+   result-cards-area becomes a real flex container taking 2/3 of the height. */
+@media (min-height: 1100px) and (min-width: 601px) {
+  .result-wrapper {
+    height: 100%;
+    margin: 0 auto;
+    gap: 0;
+  }
+  .result-hero-row {
+    flex: 1;
+    justify-content: center; /* vertically center rep/name/tagline in the top third */
+  }
+  .result-cards-area {
+    display: flex;
+    flex-direction: column;
+    flex: 2; /* takes 2× the hero's share = bottom two-thirds */
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+  }
+  /* cards-area children need their own width */
+  .result-cards-area .result-main-row,
+  .result-cards-area .result-bottom-row { width: 100%; }
+}
+
 /* ─── Responsive ────────────────────────────────────────────────── */
 
 /* Tablet + mobile: footer wraps into 2 rows so buttons get a full-width row */
@@ -1145,10 +1178,8 @@ button:focus-visible, a:focus-visible {
     flex-direction: row !important;
     align-items: center;
     justify-content: flex-start;
-    text-align: left;
     gap: 1.25rem;
   }
-  .mark-text { text-align: left; }
 
   /* Warriors full width, taller minis */
   .result-warriors-section {
@@ -1255,6 +1286,10 @@ button:focus-visible, a:focus-visible {
         <p id="result-tagline" class="result-tagline"></p>
       </div>
 
+      <!-- Cards area — display:contents on normal viewports (transparent wrapper),
+           becomes a real flex container on tall viewports to occupy bottom 2/3 -->
+      <div class="result-cards-area">
+
       <!-- Middle: Special Ability (left) + Warriors (right) -->
       <div class="result-main-row">
 
@@ -1300,6 +1335,7 @@ button:focus-visible, a:focus-visible {
         </div>
       </div>
 
+      </div><!-- /result-cards-area -->
 
     </div>
     </div><!-- /result-scroll-inner -->
