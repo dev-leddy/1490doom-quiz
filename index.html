@@ -1482,13 +1482,21 @@ function setPpState(playing) {
   iconPpPause.style.display = playing ? ''     : 'none';
 }
 
-// Start in loading state — audio has src set and preload="auto"
+function onAudioReady() {
+  if (audioReady) return;
+  audioReady = true;
+  // Attempt autoplay; if blocked by browser policy, fall back to play button
+  audio.play().catch(() => {
+    setMainState('paused');
+  });
+}
+
+// Start in loading state
 setMainState('loading');
 
-audio.addEventListener('canplay', () => {
-  audioReady = true;
-  if (audio.paused) setMainState('paused');
-});
+// Handle both: canplay fires after registration (normal) and already-ready state (cached)
+audio.addEventListener('canplay', onAudioReady);
+if (audio.readyState >= 3) onAudioReady();
 
 btnAudioMain.addEventListener('click', () => {
   if (!audioReady) return;
