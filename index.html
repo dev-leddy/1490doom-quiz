@@ -888,6 +888,15 @@ button:focus-visible, a:focus-visible {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
   #section-result { padding-top: 2rem; }
+  /* Push quiz content toward top; back button sits at absolute top-left */
+  #section-quiz {
+    align-items: flex-start;
+    padding-top: 4.5rem;
+  }
+  .btn-back {
+    top: 1.25rem;
+    left: 1.1rem;
+  }
   .result-rep-wrap { width: 90px; height: 90px; }
   .result-two-col { grid-template-columns: 1fr; }
   .site-footer { bottom: 1rem; right: 1rem; }
