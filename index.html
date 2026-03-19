@@ -687,6 +687,23 @@ button:focus-visible, a:focus-visible {
 }
 
 /* ── Company ability ── */
+.result-ability-body {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 1.1rem;
+}
+.mark-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+.mark-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .mark-name {
   font-family: var(--font-heading);
   font-size: 1rem;
@@ -1088,9 +1105,12 @@ button:focus-visible, a:focus-visible {
         <div class="result-card-header">
           <span class="result-card-header-label">Special Ability</span>
         </div>
-        <div class="result-card-body">
-          <p id="mark-name" class="mark-name"></p>
-          <p id="mark-description" class="mark-description"></p>
+        <div class="result-card-body result-ability-body">
+          <img id="mark-logo" class="mark-logo" src="" alt="">
+          <div class="mark-text">
+            <p id="mark-name" class="mark-name"></p>
+            <p id="mark-description" class="mark-description"></p>
+          </div>
         </div>
       </div>
 
@@ -1451,6 +1471,9 @@ function showResult() {
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
+  const markLogo = document.getElementById('mark-logo');
+  markLogo.src = winner.rep;
+  markLogo.alt = winner.name;
   document.getElementById('result-strategy').textContent = winner.strategy;
   document.getElementById('result-victory').textContent = winner.victoryPath;
   document.getElementById('result-link-2').href = winner.url;
