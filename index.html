@@ -462,7 +462,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: clamp(4rem, 6vh, 5.5rem) 2rem 6.5rem; /* top: proportional but capped — clears audio widget without creating huge dead space */
+  padding: clamp(4rem, 6vh, 5.5rem) 2rem 4.5rem; /* bottom clears compact single-row footer (~75px) */
   box-sizing: border-box;
 }
 #section-result::before {
@@ -839,8 +839,8 @@ button:focus-visible, a:focus-visible {
   z-index: 20;
   display: flex;
   align-items: center;
-  padding: 0.75rem 2rem;
-  gap: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  gap: 1rem;
   background: transparent;
   transition: background 400ms ease;
   pointer-events: none; /* pass-through on non-result pages */
@@ -858,8 +858,8 @@ button:focus-visible, a:focus-visible {
 .footer-cta {
   flex: 1;
   display: flex;
-  flex-direction: row; /* always side-by-side: [restart] [buy] */
-  align-items: stretch;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
   opacity: 0;
@@ -870,16 +870,17 @@ button:focus-visible, a:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }
+/* Static short text: "GET THIS COMPANY" — sized to content, never wraps */
 .footer-cta .btn-primary {
-  flex: 1;
-  min-width: max-content; /* always wide enough for the longest company name */
-  min-height: 44px;
-  font-size: 0.85rem;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.75rem;
   letter-spacing: 0.14em;
   white-space: nowrap;
 }
 .footer-buer-logo {
-  height: 80px;
+  height: 56px;
   width: auto;
   opacity: 0.6;
   flex-shrink: 0;
@@ -888,15 +889,14 @@ button:focus-visible, a:focus-visible {
   filter: brightness(1.4);
 }
 .footer-buer-logo:hover { opacity: 0.9; }
+/* "TRY AGAIN" ghost button — sized to content */
 .btn-restart-link {
-  flex: 1;
-  min-height: 44px;
+  flex: 0 0 auto;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  line-height: 1.3;
-  padding: 0.5rem 0.8rem;
+  padding: 0.4rem 1.0rem;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.20);
   border-radius: 2px;
@@ -906,8 +906,8 @@ button:focus-visible, a:focus-visible {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
+  white-space: nowrap;
   text-decoration: none;
-  white-space: normal;
   transition: color 150ms, border-color 150ms, background 150ms;
 }
 .btn-restart-link:hover {
@@ -1068,7 +1068,7 @@ button:focus-visible, a:focus-visible {
 }
 .doom-logo-corner.visible { opacity: 0.75; }
 .doom-logo-corner img {
-  height: 56px; /* footer-appropriate size */
+  height: 44px;
   width: auto;
   display: block;
 }
@@ -1090,7 +1090,8 @@ button:focus-visible, a:focus-visible {
   }
   .result-hero-row {
     flex: 1;
-    justify-content: center; /* vertically center rep/name/tagline in the top third */
+    justify-content: flex-end; /* anchor title/tagline to bottom of its slice, right above cards */
+    padding-bottom: 0.5rem;    /* small breath before first card */
   }
   .result-cards-area {
     display: flex;
@@ -1108,27 +1109,17 @@ button:focus-visible, a:focus-visible {
 
 /* ─── Responsive ────────────────────────────────────────────────── */
 
-/* Tablet + mobile: footer wraps into 2 rows so buttons get a full-width row */
-@media (max-width: 900px) {
-  .app-footer { flex-wrap: wrap; gap: 0.4rem 0.75rem; }
-  .app-footer .doom-logo-corner { order: 2; }
-  .footer-buer-logo { order: 3; margin-left: auto; }
-  .footer-cta { order: 1; flex-basis: 100%; width: 100%; }
-}
-
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  .result-scroll-inner { padding: 5rem 1.1rem 8rem; } /* top clears audio widget; bottom clears 2-row footer */
-  /* Footer: 2-row layout — buttons on top, logos below */
-  .app-footer { padding: 0.55rem 1.25rem 0.5rem; gap: 0.35rem 0.75rem; flex-wrap: wrap; }
-  .app-footer .doom-logo-corner { order: 2; }
-  .footer-buer-logo { order: 3; margin-left: auto; height: 32px; display: block; }
-  /* CTA row first */
-  .footer-cta { order: 1; flex-basis: 100%; width: 100%; }
-  .footer-cta .btn-primary { max-width: none; font-size: 0.72rem; min-height: 40px; padding: 0.4rem 0.6rem; }
-  .btn-restart-link { max-width: none; min-height: 40px; font-size: 0.6rem; }
-  .doom-logo-corner img { height: 36px; }
+  /* Single-row footer is ~52px; bottom pad just needs to clear it */
+  .result-scroll-inner { padding: 4.5rem 1.1rem 3.5rem; }
+  /* Compact single-row footer on mobile */
+  .app-footer { padding: 0.4rem 0.9rem; gap: 0.4rem; }
+  .footer-buer-logo { height: 28px; }
+  .footer-cta .btn-primary { font-size: 0.65rem; padding: 0.35rem 0.75rem; }
+  .btn-restart-link { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
+  .doom-logo-corner img { height: 32px; }
   .result-wrapper { gap: 0.8rem; }
   /* Audio widget top-left — match mobile padding */
   .audio-widget { top: 1rem; left: 1.1rem; }
@@ -1148,7 +1139,6 @@ button:focus-visible, a:focus-visible {
   .warrior-row-title { font-size: 0.75rem; }
   .warrior-row-desc  { font-size: 0.6rem; line-height: 1.4; }
   .warrior-card-text { padding: 0.25rem 0.2rem 0.4rem; gap: 0.1rem; }
-
 }
 
 /* ─── Desktop: full-width stacked layout ───────────────────────── */
@@ -1156,7 +1146,7 @@ button:focus-visible, a:focus-visible {
   /* Allow natural scroll on desktop — scroll-inner handles it, not the section */
   .result-scroll-inner {
     align-items: center;
-    padding: 2rem 2rem 5rem; /* bottom clears the fixed footer (~68px) with breathing room */
+    padding: 2rem 2rem 4rem; /* bottom clears the compact footer (~52px) */
   }
   .result-wrapper {
     gap: 1rem;
@@ -1383,7 +1373,7 @@ button:focus-visible, a:focus-visible {
   <!-- Center: buy CTA (visible on result page only) -->
   <div class="footer-cta" id="footer-cta">
     <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
-    <button id="btn-restart" class="btn-restart-link">Not your style? Take the quiz again</button>
+    <button id="btn-restart" class="btn-restart-link">Try Again</button>
   </div>
 
   <!-- Right: Buer Games logo -->
@@ -1699,7 +1689,7 @@ function showResult() {
   const shortName = winner.name.replace(/^The /, '');
 
   document.getElementById('result-name').textContent = winner.name;
-  document.getElementById('result-link-2').textContent = `Get The ${shortName}`;
+  document.getElementById('result-link-2').textContent = 'Get This Company';
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
