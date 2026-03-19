@@ -69,7 +69,9 @@ html, body {
   inset: 0;
   z-index: 1;
   background: rgba(4, 2, 1, 0.72);
+  transition: background 700ms ease;
 }
+.bg-cover.bg-cover-result { background: rgba(4, 2, 1, 0.88); }
 
 /* ─── Bottom Fog ────────────────────────────────────────────────── */
 .fog-bottom {
@@ -514,7 +516,7 @@ button:focus-visible, a:focus-visible {
   background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png')
     repeat-x center bottom / 200% auto;
   opacity: 0.75;
-  animation: cardFog1 10s linear infinite;
+  animation: cardFog1 20s linear infinite;
   pointer-events: none;
   z-index: 3;
 }
@@ -1274,6 +1276,7 @@ function transitionTo(sectionId) {
   if (sectionId === 'section-hero')        fog.classList.add('fog-hero');
   else if (sectionId === 'section-quiz')   fog.classList.add('fog-quiz');
   else if (sectionId === 'section-result') fog.classList.add('fog-result');
+  document.querySelector('.bg-cover').classList.toggle('bg-cover-result', sectionId === 'section-result');
 }
 
 function updateProgress(index) {
