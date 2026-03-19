@@ -326,6 +326,20 @@ button:focus-visible, a:focus-visible {
   gap: 1.25rem;
 }
 
+/* Progress header — floats above center, outside centering flow */
+.quiz-header {
+  position: absolute;
+  bottom: calc(50% + 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 /* Progress */
 .btn-back {
   position: absolute;
@@ -920,9 +934,8 @@ button:focus-visible, a:focus-visible {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
   #section-result { padding-top: 2rem; }
-  #section-quiz {
-    align-items: center;
-    justify-content: center;
+  .quiz-header {
+    padding: 0 1.1rem;
   }
   .btn-back {
     top: 1.25rem;
@@ -1015,8 +1028,8 @@ button:focus-visible, a:focus-visible {
 
     <button id="btn-back" class="btn-back">&#8592; Back</button>
 
-    <div class="quiz-wrapper">
-
+    <!-- Progress floats above center, outside the centering flow -->
+    <div class="quiz-header">
       <div class="progress-area">
         <span class="progress-label">Question <span id="q-num">1</span> of 5</span>
         <div class="progress-dots">
@@ -1027,15 +1040,17 @@ button:focus-visible, a:focus-visible {
           <span class="dot" data-index="4"></span>
         </div>
       </div>
-
       <div class="doom-divider"><span>✦</span></div>
+    </div>
 
+    <!-- Only question + answers — this is what gets centered -->
+    <div class="quiz-wrapper">
       <div id="question-container">
         <h2 id="question-text" class="question-text"></h2>
         <div id="answers-list" class="answers-grid"></div>
       </div>
-
     </div>
+
   </section>
 
   <!-- ── RESULT ── -->
