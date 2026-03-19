@@ -855,12 +855,13 @@ button:focus-visible, a:focus-visible {
   transform: translateY(-1px);
 }
 .footer-buer-logo {
-  height: 52px;
+  height: 72px;
   width: auto;
   opacity: 0.65;
   flex-shrink: 0;
   display: block;
   transition: opacity 200ms;
+  filter: brightness(1.3);
 }
 .footer-buer-logo:hover { opacity: 0.9; }
 .btn-restart-link {
@@ -1031,7 +1032,7 @@ button:focus-visible, a:focus-visible {
 }
 .site-footer:hover { opacity: 0.9; }
 .site-footer img {
-  height: 88px;
+  height: 108px;
   width: auto;
   filter: brightness(1.4);
   display: block;
@@ -1057,11 +1058,11 @@ button:focus-visible, a:focus-visible {
 
 /* Shrink logo before it can overlap the mute button */
 @media (max-width: 480px) {
-  .site-footer img { height: 60px; }
+  .site-footer img { height: 76px; }
 }
 @media (max-width: 360px) {
   .site-footer { right: 1rem; }
-  .site-footer img { height: 48px; }
+  .site-footer img { height: 60px; }
 }
 
 @media (max-width: 600px) {
@@ -1081,7 +1082,8 @@ button:focus-visible, a:focus-visible {
   .result-rep-wrap { width: 90px; height: 90px; }
   .result-bottom-row { grid-template-columns: 1fr; }
   .site-footer { bottom: 1rem; right: 1rem; }
-  .site-footer img { height: 68px; }
+  .site-footer img { height: 84px; }
+  .footer-buer-logo { height: 56px; }
   .doom-logo-corner { top: 1rem; right: 1rem; }
   .doom-logo-corner img { height: 52px; }
 
