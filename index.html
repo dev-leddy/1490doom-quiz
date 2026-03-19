@@ -1200,6 +1200,42 @@ button:focus-visible, a:focus-visible {
   /* Bottom row: adjust gap */
   .result-cta-bottom { gap: 1rem; }
 }
+
+/* ─── Landscape / short-viewport: iPad horizontal & similar ────────
+   At ≥900px wide but ≤900px tall (iPad 1024×768, iPad Pro 11" 1194×834):
+   Revert main-row to side-by-side so ability+warriors don't stack vertically.
+   Shortens total content height enough to always fit without scrolling. */
+@media (min-width: 900px) and (max-height: 900px) {
+  .result-scroll-inner {
+    padding: 1rem 2rem 2.5rem; /* tight top/bottom — every px counts on 768px height */
+  }
+  .result-wrapper { gap: 0.55rem; }
+
+  /* Side-by-side: ability (left) + warriors (right) */
+  .result-main-row {
+    flex-direction: row !important;
+    gap: 0.65rem;
+    align-items: stretch;
+  }
+  .result-ability-card {
+    flex: 0 0 34%;
+    width: auto !important;
+  }
+  /* Ability body stays horizontal (logo + text) but tighter */
+  .result-ability-body { gap: 0.85rem; }
+  .mark-logo { width: 60px; height: 60px; }
+
+  /* Warriors: shorter minis to keep row height manageable */
+  .result-warriors-section {
+    flex: 1;
+    width: auto !important;
+  }
+  .result-warriors-section .warrior-list { padding: 0.5rem 0 0; }
+  .warrior-mini-card { height: 140px !important; }
+
+  /* Bottom row tighter gaps */
+  .result-bottom-row { gap: 0.65rem; }
+}
 </style>
 </head>
 <body>
