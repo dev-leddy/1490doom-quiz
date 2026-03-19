@@ -799,15 +799,29 @@ button:focus-visible, a:focus-visible {
   align-items: center;
   gap: 0.6rem;
   width: 100%;
-  padding-top: 0.6rem;
+  padding: 0.6rem 5rem 0;
   border-top: 1px solid rgba(255,255,255,0.07);
   flex-shrink: 0;
+}
+@keyframes ctaGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(240,235,226,0.25), 0 0 20px rgba(240,235,226,0.07), 0 4px 18px rgba(0,0,0,0.45); }
+     50%    { box-shadow: 0 0 0 1px rgba(240,235,226,0.45), 0 0 36px rgba(240,235,226,0.16), 0 4px 18px rgba(0,0,0,0.45); }
 }
 .result-cta-bottom .btn-primary {
   width: 100%;
   min-height: 52px;
   font-size: 0.9rem;
   letter-spacing: 0.14em;
+  /* Cream/parchment — high contrast against the dark orange result page */
+  background: #f0ebe2;
+  color: #1a0a04;
+  border-radius: 2px;
+  animation: ctaGlow 3s ease-in-out infinite;
+}
+.result-cta-bottom .btn-primary:hover,
+.result-cta-bottom .btn-primary:focus-visible {
+  background: #fff9f4;
+  transform: translateY(-1px);
 }
 .btn-restart-link {
   background: none;
@@ -1036,6 +1050,9 @@ button:focus-visible, a:focus-visible {
 
   /* Warriors: fixed height image strip on small screens */
   .warrior-mini-card { flex: none; height: 130px; }
+
+  /* CTA button: narrower padding on mobile since icons are smaller */
+  .result-cta-bottom { padding-left: 3.75rem; padding-right: 3.75rem; }
 }
 
 /* ─── Desktop: full-width stacked layout ───────────────────────── */
@@ -1386,7 +1403,7 @@ const COMPANIES = [
     markName: 'Roll two dice when opening caches, choose result',
     markDescription: 'You never get bad loot. The relics call to you.',
     strategy: 'Open all 3 caches, guaranteed good loot with double rolls, modify equipment.',
-    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. You roll twice and pick the best result — the relics call to you.</span>',
+    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/relic-bitten-company'
   }
 ];
