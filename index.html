@@ -438,12 +438,10 @@ button:focus-visible, a:focus-visible {
 #section-result {
   padding: 0;
   inset: 0;
-  min-height: 100dvh; /* dynamic viewport height — accounts for mobile browser chrome */
-  overflow: hidden; /* always hidden so ::before/::after never scroll away */
+  min-height: 100dvh;
+  overflow: hidden;
   align-items: stretch;
   justify-content: flex-start;
-  /* Full battlefield atmosphere — attachment:fixed pins bg to viewport,
-     never leaves gaps from sub-pixel height rounding or zoom levels */
   background-color: #be4127;
   background-image: url('Art/Bonus%20Art/Battlefield.png');
   background-size: cover;
@@ -455,7 +453,7 @@ button:focus-visible, a:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 4.5rem); /* stop scroll track exactly at footer top */
   min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
                     expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
@@ -464,7 +462,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: clamp(4rem, 6vh, 5.5rem) 2rem 4.5rem; /* bottom clears compact single-row footer (~75px) */
+  padding: clamp(3.5rem, 5vh, 4.5rem) 2rem 3.5rem;
   box-sizing: border-box;
 }
 #section-result::before {
@@ -535,7 +533,7 @@ button:focus-visible, a:focus-visible {
 
 .result-name {
   font-family: var(--font-blackletter);
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(2.6rem, 6.5vw, 4.2rem);
   font-weight: 700;
   color: var(--company-accent);
   letter-spacing: 0.04em;
@@ -577,20 +575,94 @@ button:focus-visible, a:focus-visible {
   align-items: stretch;
 }
 
-/* ── Two-column body ── */
-.result-ability-card {
-  flex: 0 0 34%;
+/* ── Ability hero block (centered, full-width, below tagline) ── */
+.result-ability-hero {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem 1.5rem 1.4rem;
+  width: 100%;
+  background: rgba(var(--company-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--company-accent-rgb), 0.3);
+  border-radius: 10px;
+  gap: 0.55rem;
+  transition: background var(--speed), border-color var(--speed);
 }
+.mark-name-hero {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+}
+.mark-description-hero {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 520px;
+}
+
+/* Circle company icon — standalone above company name */
+.mark-logo-inline {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+  /* Rich parchment/bone gradient */
+  background: linear-gradient(145deg, #f3ece1, #dcd1be);
+  border: 3px solid rgba(var(--company-accent-rgb), 0.8);
+  border-radius: 50%;
+  padding: 0.85rem;
+  /* 1. Deep 3D drop shadow  2. Subtle company accent glow  3. Top highlight  4. Bottom shading */
+  box-shadow: 
+    0 12px 28px rgba(0,0,0,0.65),
+    0 0 32px rgba(var(--company-accent-rgb), 0.25),
+    inset 0 2px 4px rgba(255,255,255,0.7),
+    inset 0 -4px 12px rgba(90, 75, 60, 0.3);
+  transition: border-color var(--speed), box-shadow var(--speed);
+}
+
 .result-bottom-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
   width: 100%;
   flex-shrink: 0;
+}
+.result-bottom-card {
+  width: 100%;
+  background: rgba(var(--company-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--company-accent-rgb), 0.3);
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: row;
+  transition: background var(--speed), border-color var(--speed);
+}
+.result-bottom-col {
+  flex: 1;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left;
+  min-width: 0;
+}
+.result-bottom-label {
+  font-family: var(--font-display);
+  font-size: 0.52rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+}
+.result-bottom-sep {
+  width: 1px;
+  background: rgba(255,255,255,0.09);
+  flex-shrink: 0;
+  margin: 0.7rem 0;
 }
 
 /* ── Warriors section ── */
@@ -601,19 +673,31 @@ button:focus-visible, a:focus-visible {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  /* Glass panel — matches result-card treatment */
-  background: rgba(6,3,1,0.55);
+  position: relative; /* needed for ::before */
+  background: transparent;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+}
+/* AnaSky.jpg as semi-transparent layer — fog shows through from behind */
+.result-warriors-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('Art/Bonus%20Art/AnaSky.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  opacity: 0.35;
+  z-index: 0;
+  border-radius: 10px;
 }
 .result-warriors-section .warrior-list {
   flex-direction: row;
   flex: 1;
   min-height: 0;
   gap: 0;
-  padding: 0.75rem 0 0;
+  padding: 0;
   background: transparent;
 }
 .section-label {
@@ -643,7 +727,7 @@ button:focus-visible, a:focus-visible {
   z-index: 4;
 }
 
-/* Per-card layers all hidden — container handles bg, gradient, fog */
+/* Per-card layers all hidden — container handles bg */
 .warrior-mini-card .card-tower,
 .warrior-mini-card .card-dark,
 .warrior-mini-card .card-fog-1,
@@ -652,7 +736,7 @@ button:focus-visible, a:focus-visible {
   width: 100%;
   flex: 1;
   min-height: 0;
-  background: #111 center/cover no-repeat; /* fallback; JS overrides per-card with AnaSky.jpg */
+  background: transparent !important; /* AnaSky.jpg on section container shows through */
   flex-shrink: 0;
   position: relative;
   overflow: visible;
@@ -853,7 +937,6 @@ button:focus-visible, a:focus-visible {
 }
 .app-footer.result-active {
   background: rgba(4,2,1,0.90);
-  border-top: 1px solid rgba(255,255,255,0.10);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -1138,11 +1221,17 @@ button:focus-visible, a:focus-visible {
   /* Back button: below audio widget */
   .btn-back { top: 4rem; left: 1.1rem; }
   .result-rep-wrap { width: 90px; height: 90px; }
-  .result-bottom-row { grid-template-columns: 1fr; }
+  .result-bottom-row { gap: 0; }
+  /* Stack Strategy + Victory Path vertically on mobile */
+  .result-bottom-card { flex-direction: column; }
+  .result-bottom-sep {
+    width: auto;
+    height: 1px;
+    margin: 0 1.1rem;
+  }
 
-  /* Stack ability + warriors vertically on mobile — all must be explicitly full-width */
+  /* Stack warriors section full-width on mobile */
   .result-main-row { flex-direction: column; flex: none; width: 100%; }
-  .result-ability-card { flex: none; width: 100%; }
   .result-warriors-section { flex: none; width: 100%; }
 
   /* Warriors: fixed height image strip on small screens */
@@ -1158,10 +1247,11 @@ button:focus-visible, a:focus-visible {
   /* Allow natural scroll on desktop — scroll-inner handles it, not the section */
   .result-scroll-inner {
     align-items: center;
-    padding: 2rem 2rem 4rem; /* bottom clears the compact footer (~52px) */
+    padding: 1.5rem 2rem 2.5rem;
+    height: calc(100% - 3.5rem); /* desktop footer is slightly shorter */
   }
   .result-wrapper {
-    gap: 1rem;
+    gap: 0.65rem;
   }
 
   /* Unstack the main row — each section goes full width */
@@ -1169,18 +1259,6 @@ button:focus-visible, a:focus-visible {
     flex-direction: column;
     flex: none;
     gap: 1rem;
-  }
-  .result-ability-card {
-    flex: none;
-    width: 100%;
-  }
-
-  /* Ability body: horizontal row on wide screen (logo left, text right) */
-  .result-ability-body {
-    flex-direction: row !important;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1.25rem;
   }
 
   /* Warriors full width, taller minis */
@@ -1213,26 +1291,12 @@ button:focus-visible, a:focus-visible {
   }
   .result-wrapper { gap: 0.55rem; }
 
-  /* Side-by-side: ability (left) + warriors (right) */
-  .result-main-row {
-    flex-direction: row !important;
-    gap: 0.65rem;
-    align-items: stretch;
-  }
-  .result-ability-card {
-    flex: 0 0 34%;
-    width: auto !important;
-  }
-  /* Ability body stays horizontal (logo + text) but tighter */
-  .result-ability-body { gap: 0.85rem; }
-  .mark-logo { width: 60px; height: 60px; }
-
-  /* Warriors: shorter minis to keep row height manageable */
+  /* Warriors full width on landscape — ability hero block stacks above it naturally */
   .result-warriors-section {
-    flex: 1;
-    width: auto !important;
+    flex: none;
+    width: 100%;
   }
-  .result-warriors-section .warrior-list { padding: 0.5rem 0 0; }
+  .result-warriors-section .warrior-list { padding: 0; }
   .warrior-mini-card { height: 140px !important; }
 
   /* Bottom row tighter gaps */
@@ -1329,6 +1393,7 @@ button:focus-visible, a:focus-visible {
       <!-- Rep + company name + tagline -->
       <div class="result-hero-row">
         <p class="result-eyebrow">Your Doom Company Is</p>
+        <img id="mark-logo-inline" class="mark-logo-inline" src="" alt="">
         <div class="result-name-row">
           <h2 id="result-name" class="result-name"></h2>
         </div>
@@ -1339,46 +1404,29 @@ button:focus-visible, a:focus-visible {
            becomes a real flex container on tall viewports to occupy bottom 2/3 -->
       <div class="result-cards-area">
 
-      <!-- Middle: Special Ability (left) + Warriors (right) -->
-      <div class="result-main-row">
-
-        <div id="result-mark" class="result-card result-ability-card">
-          <div class="result-card-header">
-            <span class="result-card-header-label">Special Ability</span>
-          </div>
-          <div class="result-card-body result-ability-body">
-            <img id="mark-logo" class="mark-logo" src="" alt="">
-            <div class="mark-text">
-              <p id="mark-name" class="mark-name"></p>
-              <p id="mark-description" class="mark-description"></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="result-warriors-section">
-          <div class="result-card-header" style="flex-shrink:0;">
-            <span class="result-card-header-label">Your Warriors</span>
-          </div>
-          <div id="warrior-minis" class="warrior-list"></div>
-        </div>
-
+      <!-- Special Ability: prominent centered hero block -->
+      <div class="result-ability-hero">
+        <p id="mark-name" class="mark-name-hero"></p>
+        <p id="mark-description" class="mark-description-hero"></p>
       </div>
 
-      <!-- Bottom: Strategy + Victory Path — side by side -->
+      <!-- Warriors: AnaSky.jpg fills section, no header -->
+      <div class="result-main-row">
+        <div class="result-warriors-section">
+          <div id="warrior-minis" class="warrior-list"></div>
+        </div>
+      </div>
+
+      <!-- Bottom: Strategy + Victory Path — unified card -->
       <div class="result-bottom-row">
-        <div class="result-card">
-          <div class="result-card-header">
-            <span class="result-card-header-label">Strategy</span>
-          </div>
-          <div class="result-card-body">
+        <div class="result-bottom-card">
+          <div class="result-bottom-col">
+            <span class="result-bottom-label">Strategy</span>
             <span id="result-strategy" class="playstyle-value"></span>
           </div>
-        </div>
-        <div class="result-card">
-          <div class="result-card-header">
-            <span class="result-card-header-label">Victory Path</span>
-          </div>
-          <div class="result-card-body">
+          <div class="result-bottom-sep"></div>
+          <div class="result-bottom-col">
+            <span class="result-bottom-label">Victory Path</span>
             <span id="result-victory" class="playstyle-value"></span>
           </div>
         </div>
@@ -1448,13 +1496,13 @@ const COMPANIES = [
     name: 'The Graveborn',
     accent: '#9B1010', accentRgb: '155,16,16',
     rep: 'Art/Reps/Grave.png',
-    minis: ['Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/Reaver.png'],
+    minis: ['Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/WarriorPriest.png'],
     tagline: 'Born from ash and ruin. The last thing you do is strike, not scream.',
-    warriors: 'Fighter (The Reliable Blade) · Brute (The Breaking Point) · Reaver (The Chaos Blade)',
+    warriors: 'Brute (The Breaking Point) · Fighter (The Reliable Blade) · Warrior Priest (Faith in the Fog)',
     markName: 'One final action when a warrior perishes',
     markDescription: "Death is not the end. It's the last chance to take one of them with you.",
     strategy: 'Deploy aggressively, make final actions count when warriors fall, accept casualties to secure victory.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Simple. Hit hard, die last.</span>',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Simple. Hit hard, die last.</span><br><br><strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
     url: 'https://buergames.com/products/graveborn-company'
   },
   {
@@ -1476,13 +1524,13 @@ const COMPANIES = [
     name: 'The Tower Born',
     accent: '#4A6580', accentRgb: '74,101,128',
     rep: 'Art/Reps/Tower.png',
-    minis: ['Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/DoomHunter.png','Art/Warrior_Minis/Knight.png'],
+    minis: ['Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Reaver.png'],
     tagline: 'Raised in the stairwells of dead towers. Fear of falling left you long ago.',
-    warriors: 'Scout (The First to the Top) · Doom Hunter (The Elite Killer) · Knight (Shield of the Realm)',
+    warriors: 'Scout (The First to the Top) · Assassin (The High Strike) · Reaver (The Fearless Leap)',
     markName: 'Roll two dice on Falling Damage, take lowest',
     markDescription: "The fall doesn't scare you. You were born in the heights.",
     strategy: 'Rush tallest structures, push enemies off aggressively, jump between structures fearlessly.',
-    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest point on the board at game end. Get up. Stay up.</span>',
+    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest point on the board at game end. Get up. Stay up.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/tower-born-company'
   },
   {
@@ -1490,9 +1538,9 @@ const COMPANIES = [
     name: 'The Ashbound',
     accent: '#C97010', accentRgb: '201,112,16',
     rep: 'Art/Reps/Ash.png',
-    minis: ['Art/Warrior_Minis/Blacksmith.png','Art/Warrior_Minis/WarriorPriest.png','Art/Warrior_Minis/Executioner.png'],
+    minis: ['Art/Warrior_Minis/Reaver.png','Art/Warrior_Minis/Executioner.png','Art/Warrior_Minis/Blacksmith.png'],
     tagline: 'Lost something in the fire. Make the world remember where it burned.',
-    warriors: 'Blacksmith (The Equipment Master) · Warrior Priest (Guardian of the Hearth) · Executioner (Death in Sentence)',
+    warriors: 'Reaver (The Fury Bound) · Executioner (Death in Sentence) · Blacksmith (The Equipment Master)',
     markName: '+1 COMBAT within 2" of Hearth Token',
     markDescription: 'Place the Hearth where something was lost. Defend it to the death.',
     strategy: 'Force enemies to come to you, guard the Hearth strategically, fight on YOUR ground.',
@@ -1504,13 +1552,13 @@ const COMPANIES = [
     name: 'The Wretched Survivors',
     accent: '#8A7870', accentRgb: '138,120,112',
     rep: 'Art/Reps/Wretched.png',
-    minis: ['Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Fighter.png'],
+    minis: ['Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Knight.png','Art/Warrior_Minis/Brute.png'],
     tagline: "Don't know why you're alive. Scarred, limping, breathing. The strong fell ages ago.",
-    warriors: 'Scavenger (The Desperate Hoarder) · Scout (The Last Runner) · Fighter (The Stubborn One)',
+    warriors: 'Scavenger (The Desperate Hoarder) · Knight (The Last Shield) · Brute (The Stubborn One)',
     markName: '+1 SKILL and +1 DEFENSE at 2 or less VITALITY',
     markDescription: 'The more wounded you are, the harder you are to kill.',
     strategy: 'Accept damage early to activate bonuses, wounded Scavengers excel at caches, survive and outlast.',
-    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. Even at death\'s door, you find a way.</span>',
+    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. Even at death\'s door, you find a way.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/wretched-survivors-company'
   },
   {
@@ -1518,13 +1566,13 @@ const COMPANIES = [
     name: 'The Doomed Choir',
     accent: '#9B3A14', accentRgb: '155,58,20',
     rep: 'Art/Reps/Doomed.png',
-    minis: ['Art/Warrior_Minis/WarriorPriest.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/Beekeeper.png'],
+    minis: ['Art/Warrior_Minis/Beekeeper.png','Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/DoomHunter.png'],
     tagline: 'Chant not to be heard, but to be feared. When echoes come, they break ribs.',
-    warriors: 'Warrior Priest (The Voice of Doom) · Brute (The Hammer of God) · Beekeeper (The Swarm Caller)',
+    warriors: 'Beekeeper (The Swarm Caller) · Fighter (The Voice\'s Fist) · Doom Hunter (The Ordained Killer)',
     markName: 'Debuff enemy (-1 COMBAT, -1 SKILL) when surrounded by 2+ warriors',
     markDescription: 'Surround them. Chant. Watch them crumble under the weight of your hymn.',
     strategy: 'Use swarm tactics to surround targets, activate debuffs, break enemy morale.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Surround them. Swarm. Outlast.</span>',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Surround them. Swarm. Outlast.</span><br><br><strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
     url: 'https://buergames.com/products/doomed-choir-company'
   },
   {
@@ -1532,13 +1580,13 @@ const COMPANIES = [
     name: 'The Fog Walkers',
     accent: '#2A5878', accentRgb: '42,88,120',
     rep: 'Art/Reps/Fog.png',
-    minis: ['Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Sabotuer.png','Art/Warrior_Minis/Beekeeper.png'],
+    minis: ['Art/Warrior_Minis/Beekeeper.png','Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Executioner.png'],
     tagline: "You don't walk through the fog. You walk with it. No one knows how you return from the depths.",
-    warriors: 'Assassin (The Mist Blade) · Saboteur (The Trap Layer) · Beekeeper (The Fog Swarm)',
+    warriors: 'Beekeeper (The Fog Swarm) · Scout (The Ground Walker) · Executioner (Death from Below)',
     markName: '+1 DEFENSE first check each round on Ground Level',
     markDescription: 'Others fear the ground. You own it.',
     strategy: 'Fight on ground level, trap low-elevation chokepoints, counter vertical meta.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Ground level is your domain — use it.</span>',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Ground level is your domain — use it.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/fog-walkers-company'
   },
   {
@@ -1546,13 +1594,13 @@ const COMPANIES = [
     name: 'The Relic Bitten',
     accent: '#A84E10', accentRgb: '168,78,16',
     rep: 'Art/Reps/Relic.png',
-    minis: ['Art/Warrior_Minis/Scavenger.png','Art/Warrior_Minis/Blacksmith.png','Art/Warrior_Minis/DoomHunter.png'],
+    minis: ['Art/Warrior_Minis/Blacksmith.png','Art/Warrior_Minis/DoomHunter.png','Art/Warrior_Minis/Knight.png'],
     tagline: "Maps inked in blood. You don't search. You KNOW where the relics hide.",
-    warriors: 'Scavenger (The Relic Hunter) · Blacksmith (The Artificer) · Doom Hunter (The Elite Seeker)',
+    warriors: 'Blacksmith (The Artificer) · Doom Hunter (The Elite Seeker) · Knight (The Relic Guard)',
     markName: 'Roll two dice when opening caches, choose result',
     markDescription: 'You never get bad loot. The relics call to you.',
     strategy: 'Open all 3 caches, guaranteed good loot with double rolls, modify equipment.',
-    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
+    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/relic-bitten-company'
   }
 ];
@@ -1562,10 +1610,10 @@ const QUESTIONS = [
     text: "You enter a ruined castle. The fog is rising. Other warriors are closing in. What's your first move?",
     art: 'Art/Bonus Art/Ruined Tower.png',
     answers: [
-      { text: 'Climb to the highest point as fast as possible',          scores: { tower_born: 3, silent_pact: 2 } },
+      { text: 'Climb to the highest point as fast as possible',          scores: { tower_born: 3, graveborn: 2 } },
       { text: 'Search the ruins for weapons and supplies',                scores: { relic_bitten: 3, wretched_survivors: 2 } },
-      { text: 'Find a defensible position and wait for them',             scores: { graveborn: 3, ashbound: 2 } },
-      { text: "Hide in the shadows and strike when they're vulnerable",   scores: { silent_pact: 3, fog_walkers: 2 } }
+      { text: 'Find a defensible position and hold it',                   scores: { ashbound: 3, doomed_choir: 2 } },
+      { text: "Hide in the shadows and strike when they're vulnerable",   scores: { fog_walkers: 3, silent_pact: 2 } }
     ]
   },
   {
@@ -1573,9 +1621,9 @@ const QUESTIONS = [
     art: 'Art/Bonus Art/DeadKnight.png',
     answers: [
       { text: 'Take one final swing at the enemy',                        scores: { graveborn: 4, ashbound: 2 } },
-      { text: 'Tell you where they hid something valuable',               scores: { relic_bitten: 4, wretched_survivors: 2 } },
-      { text: 'Give the signal for everyone to attack together',          scores: { silent_pact: 4, doomed_choir: 2 } },
-      { text: 'Disappear into the fog below',                             scores: { fog_walkers: 4, wretched_survivors: 2 } }
+      { text: 'Tell you where they hid something valuable',               scores: { relic_bitten: 3, wretched_survivors: 2 } },
+      { text: 'Give the signal for everyone to attack together',          scores: { doomed_choir: 4, silent_pact: 2 } },
+      { text: 'Disappear into the fog below',                             scores: { fog_walkers: 4, wretched_survivors: 3 } }
     ]
   },
   {
@@ -1592,10 +1640,10 @@ const QUESTIONS = [
     text: "You're surrounded by enemies on all sides. How do you respond?",
     art: 'Art/Bonus Art/Battle.png',
     answers: [
-      { text: 'Form a circle and fight until the end',                    scores: { graveborn: 3, doomed_choir: 2 } },
-      { text: 'Break through and escape to regroup',                      scores: { silent_pact: 3, fog_walkers: 2 } },
-      { text: 'Climb up and attack from above',                           scores: { tower_born: 3, silent_pact: 2 } },
-      { text: 'Stand your ground — make them pay for every step',         scores: { ashbound: 3, graveborn: 2 } }
+      { text: 'Form a circle and fight until the end',                    scores: { doomed_choir: 3, graveborn: 2 } },
+      { text: 'Break through and escape to regroup',                      scores: { silent_pact: 3, tower_born: 2 } },
+      { text: 'Climb up and attack from above',                           scores: { tower_born: 3, silent_pact: 1 } },
+      { text: 'Stand your ground — make them pay for every step',         scores: { ashbound: 3, wretched_survivors: 2 } }
     ]
   },
   {
@@ -1603,7 +1651,7 @@ const QUESTIONS = [
     art: 'Art/Bonus Art/Standoff .png',
     answers: [
       { text: "You're standing on top of the highest tower",              scores: { tower_born: 3, silent_pact: 2 } },
-      { text: "You're the last one left alive",                           scores: { graveborn: 3, wretched_survivors: 2 } },
+      { text: "You're the last one left alive",                           scores: { graveborn: 3, ashbound: 2 } },
       { text: 'You found the most valuable treasures',                    scores: { relic_bitten: 3, wretched_survivors: 2 } },
       { text: "You survived when everyone said you wouldn't",             scores: { wretched_survivors: 4, fog_walkers: 2 } }
     ]
@@ -1752,9 +1800,9 @@ function showResult() {
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
-  const markLogo = document.getElementById('mark-logo');
-  markLogo.src = winner.rep;
-  markLogo.alt = winner.name;
+  const markLogoInline = document.getElementById('mark-logo-inline');
+  markLogoInline.src = winner.rep;
+  markLogoInline.alt = winner.name;
   document.getElementById('result-strategy').textContent = winner.strategy;
   document.getElementById('result-victory').innerHTML = winner.victoryPath;
   document.getElementById('result-link-2').href = winner.url;
@@ -1769,18 +1817,8 @@ function showResult() {
     const desc = match ? match[2] : '';
     const card = document.createElement('div');
     card.className = 'warrior-card';
-    const towerStyles = [
-      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:20% 40%; background-size:cover;',
-      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:center 40%; background-size:cover;',
-      'background-image:url(Art/Bonus%20Art/AnaSky.jpg); background-position:80% 40%; background-size:cover;',
-    ];
-    const tStyle = towerStyles[i % towerStyles.length];
     card.innerHTML = `
-      <div class="warrior-mini-card" style="${tStyle}">
-        <div class="card-tower"></div>
-        <div class="card-dark"></div>
-        <div class="card-fog-1"></div>
-        <div class="card-fog-2"></div>
+      <div class="warrior-mini-card">
         <img src="${src}" alt="${name}">
       </div>
       <div class="warrior-card-text">
