@@ -342,7 +342,7 @@ button:focus-visible, a:focus-visible {
 /* Progress */
 .btn-back {
   position: absolute;
-  top: 2rem;
+  top: 4.5rem; /* clears the 42px audio widget at top: 1.25rem */
   left: 2rem;
   background: none;
   border: none;
@@ -840,8 +840,7 @@ button:focus-visible, a:focus-visible {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
-/* Audio + Buer always clickable regardless of page */
-.app-footer .audio-widget,
+/* Buer logo always clickable */
 .footer-buer-logo { pointer-events: auto; }
 
 /* CTA center: hidden until result page */
@@ -894,16 +893,19 @@ button:focus-visible, a:focus-visible {
 
 /* ─── Audio widget ──────────────────────────────────────────────── */
 .audio-widget {
-  position: relative; /* sits inside .app-footer */
-  flex-shrink: 0;
+  position: fixed;
+  top: 1.25rem;
+  left: 2rem;
+  z-index: 25; /* above footer */
   display: flex;
   align-items: center;
+  pointer-events: auto;
 }
 
-/* Expanded panel — pops above the footer on hover */
+/* Expanded panel — drops DOWN from the top-left button */
 .audio-expanded {
   position: absolute;
-  bottom: calc(100% + 0.5rem);
+  top: calc(100% + 0.5rem);
   left: 0;
   background: rgba(10,6,4,0.88);
   border: 1px solid rgba(255,255,255,0.14);
@@ -1034,17 +1036,14 @@ button:focus-visible, a:focus-visible {
 
 
 .doom-logo-corner {
-  position: fixed;
-  top: 1.25rem;
-  right: 2rem;
-  z-index: 10;
+  flex-shrink: 0;
   pointer-events: none;
   opacity: 0;
   transition: opacity 400ms ease;
 }
 .doom-logo-corner.visible { opacity: 0.75; }
 .doom-logo-corner img {
-  height: 72px;
+  height: 56px; /* footer-appropriate size */
   width: auto;
   display: block;
 }
@@ -1058,15 +1057,14 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner { padding: 5rem 1.1rem 6.5rem; } /* top clears doom logo; bottom clears footer */
   .app-footer { padding: 0.55rem 1.25rem; gap: 0.75rem; }
   .footer-buer-logo { display: none; } /* too cramped at 390px — hide to give CTA room */
+  .doom-logo-corner img { height: 40px; } /* smaller in mobile footer */
   .result-wrapper { gap: 0.8rem; }
-  .btn-back {
-    top: 1.25rem;
-    left: 1.1rem;
-  }
+  /* Audio widget top-left — match mobile padding */
+  .audio-widget { top: 1rem; left: 1.1rem; }
+  /* Back button: below audio widget */
+  .btn-back { top: 4rem; left: 1.1rem; }
   .result-rep-wrap { width: 90px; height: 90px; }
   .result-bottom-row { grid-template-columns: 1fr; }
-  .doom-logo-corner { top: 1rem; right: 1rem; }
-  .doom-logo-corner img { height: 52px; }
 
   /* Stack ability + warriors vertically on mobile — all must be explicitly full-width */
   .result-main-row { flex-direction: column; flex: none; width: 100%; }
@@ -1074,7 +1072,11 @@ button:focus-visible, a:focus-visible {
   .result-warriors-section { flex: none; width: 100%; }
 
   /* Warriors: fixed height image strip on small screens */
-  .warrior-mini-card { flex: none; height: 130px; }
+  .warrior-mini-card { flex: none; height: 110px; }
+  /* Scale text down — 3 cards share ~355px on a 390px phone */
+  .warrior-row-title { font-size: 0.75rem; }
+  .warrior-row-desc  { font-size: 0.6rem; line-height: 1.4; }
+  .warrior-card-text { padding: 0.25rem 0.2rem 0.4rem; gap: 0.1rem; }
 
 }
 
@@ -1267,36 +1269,41 @@ button:focus-visible, a:focus-visible {
 
 </div><!-- /app -->
 
-<!-- Unified app footer: audio (left) · CTA (center, result only) · Buer logo (right) -->
-<footer class="app-footer" id="app-footer">
-  <!-- Left: music controls -->
-  <div class="audio-widget" id="audio-widget">
-    <div class="audio-expanded" id="audio-expanded">
-      <div class="audio-controls-row">
-        <button id="btn-play-pause" class="audio-ctrl-btn" aria-label="Play music">
-          <svg id="icon-pp-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8 5v14l11-7z"/></svg>
-          <svg id="icon-pp-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <button id="btn-mute" class="audio-ctrl-btn" aria-label="Mute music">
-          <svg id="icon-sound" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-          <svg id="icon-mute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z"/></svg>
-        </button>
-      </div>
-      <div class="scrubber-times">
-        <span id="scrubber-current">0:00</span>
-        <span id="scrubber-total">0:00</span>
-      </div>
-      <div class="scrubber-track" id="scrubber-track">
-        <div class="scrubber-fill" id="scrubber-fill"></div>
-        <div class="scrubber-thumb" id="scrubber-thumb"></div>
-      </div>
+<!-- Music widget — fixed top left, always present -->
+<div class="audio-widget" id="audio-widget">
+  <div class="audio-expanded" id="audio-expanded">
+    <div class="audio-controls-row">
+      <button id="btn-play-pause" class="audio-ctrl-btn" aria-label="Play music">
+        <svg id="icon-pp-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pp-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button id="btn-mute" class="audio-ctrl-btn" aria-label="Mute music">
+        <svg id="icon-sound" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <svg id="icon-mute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="display:none"><path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z"/></svg>
+      </button>
     </div>
-    <button id="btn-audio-main" class="audio-main-btn" aria-label="Play music">
-      <div class="audio-spinner" id="audio-spinner"></div>
-      <svg id="icon-main-music" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-      <svg id="icon-main-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
-      <svg id="icon-main-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-    </button>
+    <div class="scrubber-times">
+      <span id="scrubber-current">0:00</span>
+      <span id="scrubber-total">0:00</span>
+    </div>
+    <div class="scrubber-track" id="scrubber-track">
+      <div class="scrubber-fill" id="scrubber-fill"></div>
+      <div class="scrubber-thumb" id="scrubber-thumb"></div>
+    </div>
+  </div>
+  <button id="btn-audio-main" class="audio-main-btn" aria-label="Play music">
+    <div class="audio-spinner" id="audio-spinner"></div>
+    <svg id="icon-main-music" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+    <svg id="icon-main-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+    <svg id="icon-main-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+  </button>
+</div>
+
+<!-- Footer: DOOM logo (left) · CTA (center, result only) · Buer logo (right) -->
+<footer class="app-footer" id="app-footer">
+  <!-- Left: 1490 DOOM logo, visible after hero -->
+  <div class="doom-logo-corner" id="doom-logo-corner">
+    <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
   </div>
 
   <!-- Center: buy CTA (visible on result page only) -->
@@ -1308,11 +1315,6 @@ button:focus-visible, a:focus-visible {
   <!-- Right: Buer Games logo -->
   <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
 </footer>
-
-<!-- 1490 DOOM logo — top right, visible after hero -->
-<div class="doom-logo-corner" id="doom-logo-corner">
-  <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
-</div>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
