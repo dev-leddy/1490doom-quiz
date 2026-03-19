@@ -904,8 +904,8 @@ button:focus-visible, a:focus-visible {
   <div class="bg-cover"></div>
 </div>
 
-<!-- Audio -->
-<audio id="bg-audio" loop preload="auto" src="music/track.mp3"></audio>
+<!-- Audio (Howler.js for iOS/Safari compatibility) -->
+<script src="https://cdn.jsdelivr.net/npm/howler@2.2.4/dist/howler.min.js"></script>
 
 <!-- Audio widget -->
 <div class="audio-widget" id="audio-widget">
@@ -1078,9 +1078,9 @@ const COMPANIES = [
     name: 'The Graveborn',
     accent: '#9B1010', accentRgb: '155,16,16',
     rep: 'Art/Reps/Grave.png',
-    minis: ['Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/WarriorPriest.png'],
+    minis: ['Art/Warrior_Minis/Fighter.png','Art/Warrior_Minis/Brute.png','Art/Warrior_Minis/Reaver.png'],
     tagline: 'Born from ash and ruin. The last thing you do is strike, not scream.',
-    warriors: 'Fighter (The Reliable Blade) · Brute (The Breaking Point) · Warrior Priest (Faith in the Fog)',
+    warriors: 'Fighter (The Reliable Blade) · Brute (The Breaking Point) · Reaver (The Chaos Blade)',
     markName: 'One final action when a warrior perishes',
     markDescription: "Death is not the end. It's the last chance to take one of them with you.",
     strategy: 'Deploy aggressively, make final actions count when warriors fall, accept casualties to secure victory.',
@@ -1449,8 +1449,7 @@ resetScores();
 preload();
 document.querySelector('.fog-bottom').classList.add('fog-hero');
 
-// ── Audio widget ─────────────────────────────────────────────────
-const audio         = document.getElementById('bg-audio');
+// ── Audio widget (Howler.js) ──────────────────────────────────────
 const btnAudioMain  = document.getElementById('btn-audio-main');
 const btnPlayPause  = document.getElementById('btn-play-pause');
 const btnMute       = document.getElementById('btn-mute');
@@ -1467,11 +1466,11 @@ const scrubThumb    = document.getElementById('scrubber-thumb');
 const scrubCurrent  = document.getElementById('scrubber-current');
 const scrubTotal    = document.getElementById('scrubber-total');
 
-audio.volume = 0.45;
 let audioReady = false;
+let isMuted    = false;
+let scrubRaf   = null;
 
 function setMainState(state) {
-  // state: 'loading' | 'playing' | 'paused'
   audioSpinner.style.display  = state === 'loading' ? '' : 'none';
   iconMainPlay.style.display  = state === 'paused'  ? '' : 'none';
   iconMainPause.style.display = state === 'playing' ? '' : 'none';
@@ -1482,112 +1481,109 @@ function setPpState(playing) {
   iconPpPause.style.display = playing ? ''     : 'none';
 }
 
-let autoplayPending = false;
-
-function tryAutoplay() {
-  if (!audioReady || !audio.paused) return;
-  audio.play().catch(() => {
-    // Still blocked — will retry on next interaction
-  });
-}
-
-function onAudioReady() {
-  if (audioReady) return;
-  audioReady = true;
-  audio.play().catch(() => {
-    // Blocked — show play button and hook every interaction until it plays
-    setMainState('paused');
-    autoplayPending = true;
-  });
-}
-
-function onUserInteraction() {
-  if (!autoplayPending || !audio.paused) return;
-  audio.play().catch(() => {});
-}
-
-// Start in loading state
-setMainState('loading');
-
-// Retry autoplay on any user interaction anywhere on the page
-['click', 'touchstart', 'keydown', 'pointerdown'].forEach(evt => {
-  document.addEventListener(evt, onUserInteraction, { passive: true });
-});
-
-// Stop retrying once audio actually starts
-audio.addEventListener('play', () => { autoplayPending = false; });
-
-// If audio fails to load (404, codec error, etc.) — don't leave spinner forever
-audio.addEventListener('error', () => {
-  audioReady = false;
-  setMainState('paused');
-  autoplayPending = false;
-});
-
-// Handle both: canplay fires after registration (normal) and already-ready state (cached)
-audio.addEventListener('canplay', onAudioReady);
-if (audio.readyState >= 3) onAudioReady();
-
-btnAudioMain.addEventListener('click', () => {
-  if (!audioReady) return;
-  if (audio.paused) { audio.play().catch(() => {}); }
-  else              { audio.pause(); }
-});
-
-btnPlayPause.addEventListener('click', () => {
-  if (!audioReady) return;
-  if (audio.paused) { audio.play().catch(() => {}); }
-  else              { audio.pause(); }
-});
-
-audio.addEventListener('play', () => {
-  setMainState('playing');
-  setPpState(true);
-  btnAudioMain.setAttribute('aria-label', 'Pause music');
-  btnPlayPause.setAttribute('aria-label', 'Pause music');
-});
-
-audio.addEventListener('pause', () => {
-  setMainState('paused');
-  setPpState(false);
-  btnAudioMain.setAttribute('aria-label', 'Play music');
-  btnPlayPause.setAttribute('aria-label', 'Play music');
-});
-
-audio.addEventListener('loadedmetadata', () => {
-  scrubTotal.textContent = fmtTime(audio.duration);
-});
-
 function fmtTime(s) {
-  if (!isFinite(s)) return '0:00';
-  const m = Math.floor(s / 60);
+  if (!isFinite(s) || isNaN(s)) return '0:00';
+  const m   = Math.floor(s / 60);
   const sec = String(Math.floor(s % 60)).padStart(2, '0');
   return `${m}:${sec}`;
 }
 
-audio.addEventListener('timeupdate', () => {
-  if (!audio.duration) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
-  scrubFill.style.width    = pct + '%';
-  scrubThumb.style.left    = pct + '%';
-  scrubCurrent.textContent = fmtTime(audio.currentTime);
+function startScrubLoop() {
+  function tick() {
+    const pos = typeof howl.seek() === 'number' ? howl.seek() : 0;
+    const dur = howl.duration() || 0;
+    if (dur > 0) {
+      const pct = (pos / dur) * 100;
+      scrubFill.style.width    = pct + '%';
+      scrubThumb.style.left    = pct + '%';
+      scrubCurrent.textContent = fmtTime(pos);
+    }
+    scrubRaf = requestAnimationFrame(tick);
+  }
+  cancelAnimationFrame(scrubRaf);
+  scrubRaf = requestAnimationFrame(tick);
+}
+
+function stopScrubLoop() {
+  cancelAnimationFrame(scrubRaf);
+}
+
+// Start spinner immediately
+setMainState('loading');
+
+const howl = new Howl({
+  src:      ['music/track.mp3'],
+  loop:     true,
+  autoplay: true,
+  volume:   0.45,
+  html5:    true,   // required for iOS background playback + streaming
+
+  onload: function() {
+    audioReady = true;
+    scrubTotal.textContent = fmtTime(howl.duration());
+    // If autoplay was blocked, onplay won't have fired — show play button
+    if (!howl.playing()) setMainState('paused');
+  },
+
+  onloaderror: function() {
+    // File missing or codec error — hide widget silently
+    document.getElementById('audio-widget').style.display = 'none';
+  },
+
+  onplay: function() {
+    audioReady = true;
+    setMainState('playing');
+    setPpState(true);
+    btnAudioMain.setAttribute('aria-label', 'Pause music');
+    btnPlayPause.setAttribute('aria-label', 'Pause music');
+    if (howl.duration()) scrubTotal.textContent = fmtTime(howl.duration());
+    startScrubLoop();
+  },
+
+  onpause: function() {
+    setMainState('paused');
+    setPpState(false);
+    btnAudioMain.setAttribute('aria-label', 'Play music');
+    btnPlayPause.setAttribute('aria-label', 'Play music');
+    stopScrubLoop();
+  },
+
+  onplayerror: function() {
+    // Autoplay blocked by browser — show play button, retry on Howler unlock
+    if (audioReady) setMainState('paused');
+    howl.once('unlock', function() { howl.play(); });
+  },
 });
 
+btnAudioMain.addEventListener('click', () => {
+  if (!audioReady) return;
+  howl.playing() ? howl.pause() : howl.play();
+});
+
+btnPlayPause.addEventListener('click', () => {
+  if (!audioReady) return;
+  howl.playing() ? howl.pause() : howl.play();
+});
+
+btnMute.addEventListener('click', () => {
+  isMuted = !isMuted;
+  howl.mute(isMuted);
+  iconSound.style.display = isMuted ? 'none' : '';
+  iconMute.style.display  = isMuted ? ''     : 'none';
+});
+
+// Scrubber — click or drag to seek
 function seekTo(e) {
+  if (!audioReady) return;
   const rect = scrubTrack.getBoundingClientRect();
   const pct  = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-  if (audio.duration) audio.currentTime = pct * audio.duration;
+  const dur  = howl.duration();
+  if (dur) howl.seek(pct * dur);
 }
 let dragging = false;
 scrubTrack.addEventListener('mousedown', e => { dragging = true; seekTo(e); });
 document.addEventListener('mousemove',  e => { if (dragging) seekTo(e); });
 document.addEventListener('mouseup',    () => { dragging = false; });
-
-btnMute.addEventListener('click', () => {
-  audio.muted = !audio.muted;
-  iconSound.style.display = audio.muted ? 'none' : '';
-  iconMute.style.display  = audio.muted ? ''     : 'none';
-});
 </script>
 </body>
 </html>
