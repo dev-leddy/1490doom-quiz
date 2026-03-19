@@ -425,7 +425,14 @@ button:focus-visible, a:focus-visible {
   transition: background 160ms, border-color 160ms, transform 80ms;
   -webkit-tap-highlight-color: transparent;
 }
-.answer-btn:hover, .answer-btn:focus-visible {
+@media (hover: hover) {
+  .answer-btn:hover {
+    background: rgba(190,65,39,0.18);
+    border-color: rgba(190,65,39,0.55);
+    color: var(--white);
+  }
+}
+.answer-btn:focus-visible {
   background: rgba(190,65,39,0.18);
   border-color: rgba(190,65,39,0.55);
   color: var(--white);
