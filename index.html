@@ -719,6 +719,20 @@ button:focus-visible, a:focus-visible {
   line-height: 1.6;
 }
 
+.vp-desc {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.playstyle-value strong {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--white);
+  font-style: normal;
+}
+
 /* ── Playstyle ── */
 .result-playstyle {
   display: flex;
@@ -1092,9 +1106,6 @@ button:focus-visible, a:focus-visible {
       <div class="result-hero-row">
         <p class="result-eyebrow">Your Doom Company Is</p>
         <div class="result-name-row">
-          <div class="result-rep-wrap">
-            <img id="result-rep" src="" alt="">
-          </div>
           <h2 id="result-name" class="result-name"></h2>
         </div>
         <p id="result-tagline" class="result-tagline"></p>
@@ -1178,7 +1189,7 @@ const COMPANIES = [
     markName: 'One final action when a warrior perishes',
     markDescription: "Death is not the end. It's the last chance to take one of them with you.",
     strategy: 'Deploy aggressively, make final actions count when warriors fall, accept casualties to secure victory.',
-    victoryPath: 'Attrition (1 VP)',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Simple. Hit hard, die last.</span>',
     url: 'https://buergames.com/products/graveborn-company'
   },
   {
@@ -1192,7 +1203,7 @@ const COMPANIES = [
     markName: 'One warrior uses 3 actions once per game',
     markDescription: 'Perfect coordination. When the moment comes, you move as one.',
     strategy: 'Strike fast and disengage, use traps to control movement, save 3-action burst for critical moments.',
-    victoryPath: 'High Ground (2 VP) + Resourceful (1 VP)',
+    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/the-silent-pact-complete-doom-company'
   },
   {
@@ -1206,7 +1217,7 @@ const COMPANIES = [
     markName: 'Roll two dice on Falling Damage, take lowest',
     markDescription: "The fall doesn't scare you. You were born in the heights.",
     strategy: 'Rush tallest structures, push enemies off aggressively, jump between structures fearlessly.',
-    victoryPath: 'High Ground (2 VP)',
+    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest point on the board at game end. Get up. Stay up.</span>',
     url: 'https://buergames.com/products/tower-born-company'
   },
   {
@@ -1220,7 +1231,7 @@ const COMPANIES = [
     markName: '+1 COMBAT within 2" of Hearth Token',
     markDescription: 'Place the Hearth where something was lost. Defend it to the death.',
     strategy: 'Force enemies to come to you, guard the Hearth strategically, fight on YOUR ground.',
-    victoryPath: 'Attrition (1 VP) + Resourceful (1 VP)',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/ashbound-company'
   },
   {
@@ -1234,7 +1245,7 @@ const COMPANIES = [
     markName: '+1 SKILL and +1 DEFENSE at 2 or less VITALITY',
     markDescription: 'The more wounded you are, the harder you are to kill.',
     strategy: 'Accept damage early to activate bonuses, wounded Scavengers excel at caches, survive and outlast.',
-    victoryPath: 'Resourceful (1 VP)',
+    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. Even at death\'s door, you find a way.</span>',
     url: 'https://buergames.com/products/wretched-survivors-company'
   },
   {
@@ -1248,7 +1259,7 @@ const COMPANIES = [
     markName: 'Debuff enemy (-1 COMBAT, -1 SKILL) when surrounded by 2+ warriors',
     markDescription: 'Surround them. Chant. Watch them crumble under the weight of your hymn.',
     strategy: 'Use swarm tactics to surround targets, activate debuffs, break enemy morale.',
-    victoryPath: 'Attrition (1 VP)',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Surround them. Swarm. Outlast.</span>',
     url: 'https://buergames.com/products/doomed-choir-company'
   },
   {
@@ -1262,7 +1273,7 @@ const COMPANIES = [
     markName: '+1 DEFENSE first check each round on Ground Level',
     markDescription: 'Others fear the ground. You own it.',
     strategy: 'Fight on ground level, trap low-elevation chokepoints, counter vertical meta.',
-    victoryPath: 'Attrition (1 VP)',
+    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Ground level is your domain — use it.</span>',
     url: 'https://buergames.com/products/fog-walkers-company'
   },
   {
@@ -1276,7 +1287,7 @@ const COMPANIES = [
     markName: 'Roll two dice when opening caches, choose result',
     markDescription: 'You never get bad loot. The relics call to you.',
     strategy: 'Open all 3 caches, guaranteed good loot with double rolls, modify equipment.',
-    victoryPath: 'Resourceful (1 VP)',
+    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. You roll twice and pick the best result — the relics call to you.</span>',
     url: 'https://buergames.com/products/relic-bitten-company'
   }
 ];
@@ -1475,12 +1486,8 @@ function showResult() {
   markLogo.src = winner.rep;
   markLogo.alt = winner.name;
   document.getElementById('result-strategy').textContent = winner.strategy;
-  document.getElementById('result-victory').textContent = winner.victoryPath;
+  document.getElementById('result-victory').innerHTML = winner.victoryPath;
   document.getElementById('result-link-2').href = winner.url;
-
-  const repImg = document.getElementById('result-rep');
-  repImg.src = winner.rep;
-  repImg.alt = winner.name;
 
   const minisEl = document.getElementById('warrior-minis');
   minisEl.innerHTML = '';
