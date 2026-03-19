@@ -908,6 +908,7 @@ button:focus-visible, a:focus-visible {
     gap: 0;
     padding: 0;
     position: relative;
+    background-image: var(--warrior-panel-bg);
     background-size: cover;
     background-position: center 35%;
   }
@@ -1475,10 +1476,8 @@ function showResult() {
     minisEl.appendChild(card);
   });
 
-  // Mobile: set one shared background image on the warrior panel container
-  minisEl.style.backgroundImage = 'url(Art/Bonus%20Art/Battlefield.png)';
-  minisEl.style.backgroundSize  = 'cover';
-  minisEl.style.backgroundPosition = 'center 35%';
+  // CSS variable consumed by mobile media query only — desktop layout unaffected
+  minisEl.style.setProperty('--warrior-panel-bg', 'url(Art/Bonus%20Art/Battlefield.png)');
 
   transitionTo('section-result');
   document.getElementById('section-result').scrollTop = 0;
