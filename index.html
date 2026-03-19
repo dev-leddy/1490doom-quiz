@@ -605,6 +605,8 @@ button:focus-visible, a:focus-visible {
   margin: 0 auto;
   filter: brightness(0) invert(1);
 }
+/* Per-image height tweaks for tight/padded canvases */
+.warrior-row-title[data-name="Reaver"] { height: 24px; }
 .warrior-row-desc {
   font-family: var(--font-body);
   font-style: italic;
@@ -1426,7 +1428,7 @@ function showResult() {
     ];
     const tStyle = towerStyles[i % towerStyles.length];
     const nameEl = titleSrc
-      ? `<img class="warrior-row-title" src="${titleSrc}" alt="${name}">`
+      ? `<img class="warrior-row-title" data-name="${name}" src="${titleSrc}" alt="${name}">`
       : `<span class="warrior-row-name">${name}</span>`;
     card.innerHTML = `
       <div class="warrior-mini-card">
