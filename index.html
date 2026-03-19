@@ -918,6 +918,22 @@ button:focus-visible, a:focus-visible {
   display: block;
 }
 
+.doom-logo-corner {
+  position: fixed;
+  top: 1.25rem;
+  right: 2rem;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.doom-logo-corner.visible { opacity: 0.75; }
+.doom-logo-corner img {
+  height: 72px;
+  width: auto;
+  display: block;
+}
+
 /* ─── Responsive ────────────────────────────────────────────────── */
 
 /* Shrink logo before it can overlap the mute button */
@@ -941,6 +957,8 @@ button:focus-visible, a:focus-visible {
   .result-bottom-row { grid-template-columns: 1fr; }
   .site-footer { bottom: 1rem; right: 1rem; }
   .site-footer img { height: 68px; }
+  .doom-logo-corner { top: 1rem; right: 1rem; }
+  .doom-logo-corner img { height: 52px; }
 
   /* Warriors: slightly shorter image strip on small screens */
   .warrior-mini-card { height: 130px; }
@@ -1119,6 +1137,11 @@ button:focus-visible, a:focus-visible {
 <footer class="site-footer">
   <img src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
 </footer>
+
+<!-- 1490 DOOM logo — top right, visible after hero -->
+<div class="doom-logo-corner" id="doom-logo-corner">
+  <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
+</div>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
@@ -1328,6 +1351,7 @@ function transitionTo(sectionId) {
   else if (sectionId === 'section-quiz')   fog.classList.add('fog-quiz');
   else if (sectionId === 'section-result') fog.classList.add('fog-result');
   document.querySelector('.bg-cover').classList.toggle('bg-cover-result', sectionId === 'section-result');
+  document.getElementById('doom-logo-corner').classList.toggle('visible', sectionId !== 'section-hero');
 }
 
 function updateProgress(index) {
