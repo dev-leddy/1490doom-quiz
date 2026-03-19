@@ -437,7 +437,8 @@ button:focus-visible, a:focus-visible {
 /* ─── RESULT ────────────────────────────────────────────────────── */
 #section-result {
   padding: 0;
-  bottom: 0; /* fills full viewport — footer z-index:20 overlaps cleanly */
+  inset: 0; /* explicit: fills full viewport on all sides */
+  min-height: 100vh; /* belt-and-suspenders — bg never leaves a gap */
   overflow: hidden; /* always hidden so ::before/::after never scroll away */
   align-items: stretch;
   justify-content: flex-start;
@@ -485,7 +486,7 @@ button:focus-visible, a:focus-visible {
 .result-wrapper {
   max-width: 960px;
   width: 100%;
-  margin: 0 auto; /* horizontal centering only — vertical centering via padding-top above */
+  margin: auto; /* auto on all sides: centers vertically + horizontally in flex column */
   display: flex;
   flex-direction: column;
   align-items: center;
