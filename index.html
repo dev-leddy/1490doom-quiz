@@ -319,6 +319,7 @@ button:focus-visible, a:focus-visible {
 
 /* ─── QUIZ ──────────────────────────────────────────────────────── */
 .quiz-wrapper {
+  position: relative;
   max-width: var(--max-w);
   width: 100%;
   display: flex;
@@ -326,15 +327,13 @@ button:focus-visible, a:focus-visible {
   gap: 1.25rem;
 }
 
-/* Progress header — floats above center, outside centering flow */
+/* Progress header — anchored just above the question container */
 .quiz-header {
   position: absolute;
-  bottom: calc(50% + 2rem);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: var(--max-w);
-  padding: 0 2rem;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  padding-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -934,9 +933,6 @@ button:focus-visible, a:focus-visible {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
   #section-result { padding-top: 2rem; }
-  .quiz-header {
-    padding: 0 1.1rem;
-  }
   .btn-back {
     top: 1.25rem;
     left: 1.1rem;
