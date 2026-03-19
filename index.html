@@ -923,22 +923,18 @@ button:focus-visible, a:focus-visible {
     pointer-events: none;
     z-index: 1;
   }
-  /* Each warrior: equal column, transparent — floats on shared bg */
+  /* Each warrior: equal column, transparent — floats on shared bg, no dividers */
   .warrior-card {
     flex: 1;
     flex-direction: column;
     background: transparent;
     border: none;
-    border-right: 1px solid rgba(255,255,255,0.1);
     position: relative;
     z-index: 2;
   }
-  .warrior-card:last-child { border-right: none; }
-  /* Hide per-card layers — shared container bg handles it */
+  /* Hide per-card bg/dark layers only — keep fog so smoke drifts across */
   .warrior-mini-card .card-tower,
-  .warrior-mini-card .card-dark,
-  .warrior-mini-card .card-fog-1,
-  .warrior-mini-card .card-fog-2 { display: none; }
+  .warrior-mini-card .card-dark { display: none; }
   /* Transparent image panel — just the mini floats */
   .warrior-mini-card {
     width: 100%;
