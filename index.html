@@ -1095,7 +1095,7 @@ button:focus-visible, a:focus-visible {
   .result-cards-area {
     display: flex;
     flex-direction: column;
-    flex: 2; /* takes 2× the hero's share = bottom two-thirds */
+    flex: 4; /* hero is 1/5, cards fill the remaining 4/5 */
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -1156,7 +1156,7 @@ button:focus-visible, a:focus-visible {
   /* Allow natural scroll on desktop — scroll-inner handles it, not the section */
   .result-scroll-inner {
     align-items: center;
-    padding: 2rem 2rem 7rem; /* bottom clears the fixed footer */
+    padding: 2rem 2rem 5rem; /* bottom clears the fixed footer (~68px) with breathing room */
   }
   .result-wrapper {
     gap: 1rem;
