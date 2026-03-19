@@ -1482,17 +1482,40 @@ function setPpState(playing) {
   iconPpPause.style.display = playing ? ''     : 'none';
 }
 
+let autoplayPending = false;
+
+function tryAutoplay() {
+  if (!audioReady || !audio.paused) return;
+  audio.play().catch(() => {
+    // Still blocked — will retry on next interaction
+  });
+}
+
 function onAudioReady() {
   if (audioReady) return;
   audioReady = true;
-  // Attempt autoplay; if blocked by browser policy, fall back to play button
   audio.play().catch(() => {
+    // Blocked — show play button and hook every interaction until it plays
     setMainState('paused');
+    autoplayPending = true;
   });
+}
+
+function onUserInteraction() {
+  if (!autoplayPending || !audio.paused) return;
+  audio.play().catch(() => {});
 }
 
 // Start in loading state
 setMainState('loading');
+
+// Retry autoplay on any user interaction anywhere on the page
+['click', 'touchstart', 'keydown', 'pointerdown'].forEach(evt => {
+  document.addEventListener(evt, onUserInteraction, { passive: true });
+});
+
+// Stop retrying once audio actually starts
+audio.addEventListener('play', () => { autoplayPending = false; });
 
 // Handle both: canplay fires after registration (normal) and already-ready state (cached)
 audio.addEventListener('canplay', onAudioReady);
