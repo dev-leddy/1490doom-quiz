@@ -902,17 +902,19 @@ button:focus-visible, a:focus-visible {
   .site-footer { bottom: 1rem; right: 1rem; }
   .site-footer img { height: 68px; }
 
-  /* ── Warriors: one shared background, 3 minis side by side ── */
+  /* ── Warriors: one seamless panel, 3 minis side by side ── */
   .result-warriors-section .warrior-list {
     flex-direction: row;
     gap: 0;
     padding: 0;
     position: relative;
+    /* Company accent as base (matches desktop orange treatment) + battlefield image */
+    background-color: var(--company-accent);
     background-image: var(--warrior-panel-bg);
     background-size: cover;
     background-position: center 35%;
   }
-  /* Shared dark gradient so minis read clearly against any background */
+  /* Dark gradient overlay (::before) */
   .result-warriors-section .warrior-list::before {
     content: '';
     position: absolute;
@@ -924,7 +926,19 @@ button:focus-visible, a:focus-visible {
     pointer-events: none;
     z-index: 1;
   }
-  /* Each warrior: equal column — strip all card chrome */
+  /* Single seamless fog layer spanning full panel (::after) */
+  .result-warriors-section .warrior-list::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png')
+      repeat-x center bottom / 200% auto;
+    opacity: 0.75;
+    animation: cardFog1 10s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+  /* Each warrior: equal column — no card chrome at all, no overflow clip */
   .warrior-card {
     flex: 1;
     flex-direction: column;
@@ -933,16 +947,19 @@ button:focus-visible, a:focus-visible {
     backdrop-filter: none;
     overflow: visible;
     position: relative;
-    z-index: 2;
+    z-index: 4;
   }
-  /* Hide per-card bg/dark layers only — keep fog so smoke drifts across */
+  /* Hide all per-card layers — container handles bg, gradient, and fog */
   .warrior-mini-card .card-tower,
-  .warrior-mini-card .card-dark { display: none; }
-  /* Transparent image panel — just the mini floats */
+  .warrior-mini-card .card-dark,
+  .warrior-mini-card .card-fog-1,
+  .warrior-mini-card .card-fog-2 { display: none; }
+  /* Transparent image panel — remove overflow clip so no seam between cards */
   .warrior-mini-card {
     width: 100%;
     height: 130px;
     background: transparent !important;
+    overflow: visible;
     flex-shrink: 0;
   }
   /* Name + desc centered below each mini */
@@ -950,7 +967,7 @@ button:focus-visible, a:focus-visible {
     text-align: center;
     padding: 0.4rem 0.2rem 0.65rem;
     position: relative;
-    z-index: 2;
+    z-index: 4;
   }
   /* Height flows naturally in single-col result layout */
   .result-warriors-section {
