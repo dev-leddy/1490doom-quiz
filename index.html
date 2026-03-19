@@ -459,7 +459,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 1.5rem 2rem 6.5rem; /* bottom clears the footer */
+  padding: clamp(4rem, 6vh, 5.5rem) 2rem 6.5rem; /* top: proportional but capped — clears audio widget without creating huge dead space */
   box-sizing: border-box;
 }
 #section-result::before {
@@ -485,8 +485,7 @@ button:focus-visible, a:focus-visible {
 .result-wrapper {
   max-width: 960px;
   width: 100%;
-  /* no fixed height — lets auto margins do vertical centering */
-  margin: auto 0; /* top/bottom: auto = centers vertically when there's free space */
+  margin: 0 auto; /* horizontal centering only — vertical centering via padding-top above */
   display: flex;
   flex-direction: column;
   align-items: center;
