@@ -7,7 +7,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link href="https://fonts.cdnfonts.com/css/caslon-antique" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'Caslon Antique';
+  src: url('fonts/CaslonAntique-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Caslon Antique';
+  src: url('fonts/CaslonAntique-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Caslon Antique';
+  src: url('fonts/CaslonAntique-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Caslon Antique';
+  src: url('fonts/CaslonAntique-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+</style>
 <style>
 /* ─── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -627,6 +656,7 @@ button:focus-visible, a:focus-visible {
 .result-card-header {
   background: #be4127;
   padding: 0.45rem 0.85rem;
+  text-align: left;
 }
 .result-card-header-label {
   font-family: var(--font-blackletter);
