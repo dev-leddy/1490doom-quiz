@@ -1141,6 +1141,14 @@ button:focus-visible, a:focus-visible {
   .doom-logo-corner img { height: 28px; }
   .footer-buer-logo { height: 22px; }
   .result-wrapper { gap: 0.8rem; }
+  /* Fog: brighter + taller on mobile — harder to see on small screens */
+  .fog-bottom {
+    height: 42vh;
+    filter: blur(2px) saturate(1.4) sepia(0.15) brightness(1.5);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 20%, black 55%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 20%, black 55%);
+  }
+  .fog-bottom.fog-hero { opacity: 0.6; }
   /* Audio widget top-left — match mobile padding */
   .audio-widget { padding: 0.5rem 0.75rem; }
   /* Back button: below audio widget */
