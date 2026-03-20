@@ -484,18 +484,21 @@ button:focus-visible, a:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png');
-  background-size: 200% 100%;
-  background-position: 0% 50%;
+  /* Two fog layers — top anchored + bottom anchored, drifting in opposite directions */
+  background-image:
+    url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png'),
+    url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png');
+  background-size: 200% 100%, 250% 100%; /* full height per layer — prevents overlap brightness band in the middle */
+  background-position: 0% 0%, 100% 100%;
   background-repeat: repeat-x;
   opacity: 0.45;
-  animation: resultFogDrift 40s linear infinite;
+  animation: resultFogDrift 35s linear infinite;
   pointer-events: none;
   z-index: 1;
 }
 @keyframes resultFogDrift {
-  from { background-position: 0% 50%; }
-  to   { background-position: 200% 50%; }
+  from { background-position: 0%    0%,   100%  100%; }
+  to   { background-position: 200%  0%,  -150%  100%; }
 }
 /* Mask the fog vertically on non-mobile — prevents the PNG's hard top/bottom
    edges from showing as visible lines at wider/taller viewports */
