@@ -890,19 +890,14 @@ button:focus-visible, a:focus-visible {
   letter-spacing: 0.03em;
 }
 /* Clickable affordance on the mini-cards */
-.warrior-mini-card.zoomable {
-  cursor: zoom-in;
-  transition: transform 160ms ease, filter 160ms ease;
-}
+.warrior-mini-card.zoomable { cursor: zoom-in; }
+.warrior-mini-card.zoomable img { transition: transform 180ms ease; }
 /* Only apply hover lift on real pointer devices — prevents sticky-hover on touch */
 @media (hover: hover) and (pointer: fine) {
-  .warrior-mini-card.zoomable:hover {
-    transform: scale(1.04);
-    filter: brightness(1.1);
-  }
+  .warrior-mini-card.zoomable:hover img { transform: scale(1.1) translateY(-4px); }
 }
 /* Touch tap feedback */
-.warrior-mini-card.zoomable:active { transform: scale(0.96); filter: brightness(1.08); }
+.warrior-mini-card.zoomable:active img { transform: scale(0.97); }
 
 .warrior-card-text {
   padding: 0.4rem 0.3rem 0.65rem;
