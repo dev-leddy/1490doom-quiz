@@ -1692,7 +1692,9 @@ function handleAnswer(answer) {
   if (state.currentQuestion < QUESTIONS.length) {
     showQuestion(state.currentQuestion);
   } else {
-    setTimeout(showResult, 220);
+    // Fade quiz out first, then reveal result once transition completes
+    document.getElementById('section-quiz').classList.remove('active');
+    setTimeout(showResult, 430);
   }
 }
 
@@ -1774,9 +1776,11 @@ function resetQuiz() {
 // ── PRELOAD IMAGES ────────────────────────────────────────────────
 
 function preload() {
-  [...QUESTIONS.map(q => q.art), ...COMPANIES.map(c => c.rep)].forEach(src => {
-    new Image().src = src;
-  });
+  const srcs = [
+    ...QUESTIONS.map(q => q.art),
+    ...COMPANIES.flatMap(c => [c.rep, ...c.minis]),
+  ];
+  [...new Set(srcs)].forEach(src => { new Image().src = src; });
 }
 
 // ── INIT ──────────────────────────────────────────────────────────
