@@ -1144,9 +1144,9 @@ button:focus-visible, a:focus-visible {
   /* Fog: brighter + taller on mobile — harder to see on small screens */
   .fog-bottom {
     height: 42vh;
-    filter: blur(2px) saturate(1.4) sepia(0.15) brightness(1.5);
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 20%, black 55%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 20%, black 55%);
+    filter: blur(6px) saturate(1.4) sepia(0.15) brightness(1.5);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.85) 50%, black 70%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.85) 50%, black 70%);
   }
   .fog-bottom.fog-hero { opacity: 0.6; }
   /* Audio widget top-left — match mobile padding */
