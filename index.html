@@ -983,18 +983,18 @@ button:focus-visible, a:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }
-/* Buy button — equal flex with restart, both same width */
+/* Buy button — equal flex with restart, both same width + height */
 .footer-cta .btn-primary {
   flex: 1;
   max-width: 215px;
   min-width: 0;
-  min-height: 40px;
-  padding: 0.4rem 1.0rem;
+  min-height: 52px; /* 2 lines × 0.75rem × 1.3 line-height + padding */
+  padding: 0.35rem 1.0rem;
   font-size: 0.75rem;
-  letter-spacing: 0.09em; /* reduced from 0.14em — 18-char "Claim Your Company" needs breathing room */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 0.09em;
+  white-space: pre-line; /* respects \n in textContent, centers each line */
+  text-align: center;
+  line-height: 1.3;
 }
 .footer-buer-logo {
   height: 56px;
@@ -1006,26 +1006,28 @@ button:focus-visible, a:focus-visible {
   filter: brightness(1.4);
 }
 .footer-buer-logo:hover { opacity: 0.9; }
-/* "TRY AGAIN" ghost button — equal flex with buy button, always same width */
+/* Ghost button — exactly mirrors primary sizing */
 .btn-restart-link {
   flex: 1;
   max-width: 215px;
   min-width: 0;
-  min-height: 40px;
+  min-height: 52px; /* matches primary */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 1.0rem;
+  padding: 0.35rem 1.0rem;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.20);
   border-radius: 2px;
   color: rgba(255,255,255,0.55);
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;    /* matches primary — identical height math */
+  letter-spacing: 0.09em;
+  line-height: 1.3;
   text-transform: uppercase;
   cursor: pointer;
-  white-space: nowrap;
+  white-space: pre-line; /* respects \n, centers each line */
+  text-align: center;
   text-decoration: none;
   transition: color 150ms, border-color 150ms, background 150ms;
 }
@@ -1146,8 +1148,8 @@ button:focus-visible, a:focus-visible {
   #section-result { background-attachment: scroll; }
   /* Compact footer — buttons only */
   .app-footer { padding: 0.4rem 0.9rem; }
-  .footer-cta .btn-primary { font-size: 0.65rem; padding: 0.35rem 0.75rem; }
-  .btn-restart-link { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
+  .footer-cta .btn-primary,
+  .btn-restart-link { font-size: 0.65rem; padding: 0.3rem 0.65rem; min-height: 46px; }
   /* Shrink top-right logos on mobile */
   .top-logos { padding: 0.5rem 0.75rem; gap: 0.45rem; }
   .doom-logo-corner img { height: 28px; }
@@ -1402,7 +1404,7 @@ button:focus-visible, a:focus-visible {
 <footer class="app-footer" id="app-footer">
   <div class="footer-cta" id="footer-cta">
     <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
-    <button id="btn-restart" class="btn-restart-link">Seek Another Path</button>
+    <button id="btn-restart" class="btn-restart-link">Seek&#10;Another Path</button>
   </div>
 </footer>
 
@@ -1715,7 +1717,7 @@ function showResult() {
   const shortName = winner.name.replace(/^The /, '');
 
   document.getElementById('result-name').textContent = winner.name;
-  document.getElementById('result-link-2').textContent = 'Claim Your Company';
+  document.getElementById('result-link-2').textContent = 'Claim Your\nCompany';
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
