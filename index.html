@@ -903,17 +903,12 @@ button:focus-visible, a:focus-visible {
 }
 /* Clickable affordance on the mini-cards */
 .warrior-mini-card.zoomable { cursor: zoom-in; }
-.warrior-mini-card.zoomable img { transition: transform 220ms ease; }
-.warrior-mini-card::after    { transition: opacity 220ms ease; }
+.warrior-mini-card.zoomable img { transition: transform 180ms ease; }
 /* Only apply hover lift on real pointer devices — prevents sticky-hover on touch */
 @media (hover: hover) and (pointer: fine) {
-  /* Float the warrior up, dissolve the bottom gradient + label so it reads as
-     a clean floating mini — no card chrome, just the model */
   .warrior-card:hover .warrior-mini-card img {
-    transform: scale(1.32) translateY(-10px);
+    transform: translateY(-6px);
   }
-  .warrior-card:hover .warrior-mini-card::after { opacity: 0; }
-  .warrior-card:hover .warrior-card-text       { opacity: 0; }
 }
 /* Touch tap feedback */
 .warrior-mini-card.zoomable:active img { transform: scale(0.97); }
@@ -924,7 +919,6 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   gap: 0.15rem;
   text-align: center;
-  transition: opacity 220ms ease;
   position: relative;
   z-index: 6;
   overflow: hidden;
