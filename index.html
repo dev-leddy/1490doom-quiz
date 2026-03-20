@@ -476,7 +476,7 @@ button:focus-visible, a:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(4,2,1,0.91) 0%, rgba(4,2,1,0.95) 60%, rgba(4,2,1,0.98) 100%);
+  background: linear-gradient(to bottom, rgba(4,2,1,0.93) 0%, rgba(4,2,1,0.97) 40%, rgba(4,2,1,0.97) 65%, rgba(4,2,1,0.98) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -1275,11 +1275,6 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner { height: calc(100dvh - var(--footer-h, 3.75rem)); padding: 4.5rem 1.1rem 4rem; }
   /* background-attachment:fixed is broken on iOS Safari — revert to scroll */
   #section-result { background-attachment: scroll; }
-  /* Battlefield.png has a visible horizon band on narrow screens — darken the overlay
-     enough to suppress it without fully hiding the atmospheric background texture */
-  #section-result::before {
-    background: linear-gradient(to bottom, rgba(4,2,1,0.93) 0%, rgba(4,2,1,0.96) 50%, rgba(4,2,1,0.98) 100%);
-  }
   /* Compact footer — logos + buttons */
   .app-footer { padding: 0.4rem 0.9rem; gap: 0.6rem; }
   .footer-cta .btn-primary,
