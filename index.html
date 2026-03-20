@@ -460,7 +460,7 @@ button:focus-visible, a:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: 100%; /* padding-bottom handles footer clearance — no raw background strip */
+  height: calc(100% - 3.5rem); /* stops at footer top; scrollbar never goes behind footer */
   min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
                     expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
@@ -1139,8 +1139,9 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  /* Top clears audio widget (y=16, h=42 → needs ~68px); bottom clears footer buttons */
-  .result-scroll-inner { padding: 4.5rem 1.1rem 3.5rem; }
+  /* Mobile: dvh accounts for browser chrome (address bar) shrinking the viewport */
+  /* Top clears audio widget; scrollbar stops at footer top */
+  .result-scroll-inner { height: calc(100dvh - 3.5rem); padding: 4.5rem 1.1rem 3.5rem; }
   /* background-attachment:fixed is broken on iOS Safari — revert to scroll */
   #section-result { background-attachment: scroll; }
   /* Compact footer — buttons only */
@@ -1184,7 +1185,7 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner {
     align-items: center;
     padding: 1.5rem 2rem 2.5rem;
-    height: 100%;
+    height: calc(100% - 3.5rem);
   }
   .result-wrapper {
     gap: 0.65rem;
