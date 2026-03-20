@@ -575,8 +575,7 @@ button:focus-visible, a:focus-visible {
 .result-main-row {
   display: flex;
   flex-direction: row;
-  flex: 1;
-  min-height: 0;
+  flex: none;
   gap: 0.65rem;
   width: 100%;
   align-items: stretch;
@@ -677,8 +676,8 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 0;
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  width: 100%;
   overflow: hidden;
   position: relative; /* needed for ::before */
   background: transparent;
@@ -701,8 +700,7 @@ button:focus-visible, a:focus-visible {
 }
 .result-warriors-section .warrior-list {
   flex-direction: row;
-  flex: 1;
-  min-height: 0;
+  flex: none;
   gap: 0;
   padding: 0;
   background: transparent;
@@ -741,11 +739,9 @@ button:focus-visible, a:focus-visible {
 .warrior-mini-card .card-fog-2 { display: none; }
 .warrior-mini-card {
   width: 100%;
-  flex: 1;
-  min-height: 0;
-  height: 160px; /* base — prevents collapse in scroll container; overridden at mobile (110px) and desktop (200px) */
+  flex: none;
+  height: 160px; /* base for 601-899px; mobile overrides to 110px, desktop to 200px */
   background: transparent !important; /* AnaSky.jpg on section container shows through */
-  flex-shrink: 0;
   position: relative;
   overflow: visible;
 }
