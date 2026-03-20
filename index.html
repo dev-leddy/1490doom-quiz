@@ -114,9 +114,9 @@ html, body {
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
-  filter: blur(2px) saturate(1.1) sepia(0.15);
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
+  filter: blur(3px) saturate(1.2) sepia(0.2);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 30%, black 70%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 30%, black 70%);
   opacity: 1;
   transition: opacity 600ms ease;
 }
@@ -460,7 +460,7 @@ button:focus-visible, a:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: calc(100% - 4.5rem); /* stop scroll track exactly at footer top */
+  height: calc(100dvh - var(--footer-h, 4.5rem)); /* JS sets --footer-h to measured px value */
   min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
                     expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
@@ -469,7 +469,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: clamp(3.5rem, 5vh, 4.5rem) 2rem 3.5rem;
+  padding: clamp(2rem, 3.5vh, 3rem) 2rem 3.5rem; /* logos top-right only — less top clearance needed */
   box-sizing: border-box;
 }
 #section-result::before {
@@ -575,8 +575,7 @@ button:focus-visible, a:focus-visible {
 .result-main-row {
   display: flex;
   flex-direction: row;
-  flex: 1;
-  min-height: 0;
+  flex: none;
   gap: 0.65rem;
   width: 100%;
   align-items: stretch;
@@ -677,8 +676,8 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 0;
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  width: 100%;
   overflow: hidden;
   position: relative; /* needed for ::before */
   background: transparent;
@@ -701,10 +700,9 @@ button:focus-visible, a:focus-visible {
 }
 .result-warriors-section .warrior-list {
   flex-direction: row;
-  flex: 1;
-  min-height: 0;
+  flex: none;
   gap: 0;
-  padding: 0;
+  padding: 0.5rem 0 0; /* breathing room above the warrior images */
   background: transparent;
 }
 .section-label {
@@ -741,10 +739,9 @@ button:focus-visible, a:focus-visible {
 .warrior-mini-card .card-fog-2 { display: none; }
 .warrior-mini-card {
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  height: 160px; /* base for 601-899px; mobile overrides to 110px, desktop to 200px */
   background: transparent !important; /* AnaSky.jpg on section container shows through */
-  flex-shrink: 0;
   position: relative;
   overflow: visible;
 }
@@ -936,8 +933,8 @@ button:focus-visible, a:focus-visible {
   z-index: 20;
   display: flex;
   align-items: center;
-  padding: 0.5rem 1.5rem;
   gap: 1rem;
+  padding: 0.5rem 1.5rem;
   background: transparent;
   transition: background 400ms ease;
   pointer-events: none; /* pass-through on non-result pages */
@@ -947,16 +944,18 @@ button:focus-visible, a:focus-visible {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
-/* Buer logo always clickable */
-.footer-buer-logo-link { 
-  pointer-events: auto; 
+/* Logos always clickable even though footer is pointer-events:none */
+.footer-buer-logo-link,
+.doom-logo-corner {
+  pointer-events: auto;
   display: block;
+  flex-shrink: 0;
 }
 .footer-buer-logo-link:hover .footer-buer-logo {
   opacity: 0.9;
 }
 
-/* CTA center: hidden until result page */
+/* CTA: hidden until result page — flex: 1 fills center between the two logos */
 .footer-cta {
   flex: 1;
   display: flex;
@@ -972,18 +971,18 @@ button:focus-visible, a:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }
-/* Buy button — equal flex with restart, both same width */
+/* Buy button — equal flex with restart, both same width + height */
 .footer-cta .btn-primary {
   flex: 1;
   max-width: 215px;
   min-width: 0;
-  min-height: 40px;
-  padding: 0.4rem 1.0rem;
+  min-height: 52px; /* 2 lines × 0.75rem × 1.3 line-height + padding */
+  padding: 0.35rem 1.0rem;
   font-size: 0.75rem;
-  letter-spacing: 0.09em; /* reduced from 0.14em — 18-char "Claim Your Company" needs breathing room */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 0.09em;
+  white-space: pre-line; /* respects \n in textContent, centers each line */
+  text-align: center;
+  line-height: 1.3;
 }
 .footer-buer-logo {
   height: 56px;
@@ -995,26 +994,28 @@ button:focus-visible, a:focus-visible {
   filter: brightness(1.4);
 }
 .footer-buer-logo:hover { opacity: 0.9; }
-/* "TRY AGAIN" ghost button — equal flex with buy button, always same width */
+/* Ghost button — exactly mirrors primary sizing */
 .btn-restart-link {
   flex: 1;
   max-width: 215px;
   min-width: 0;
-  min-height: 40px;
+  min-height: 52px; /* matches primary */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 1.0rem;
+  padding: 0.35rem 1.0rem;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.20);
   border-radius: 2px;
   color: rgba(255,255,255,0.55);
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;    /* matches primary — identical height math */
+  letter-spacing: 0.09em;
+  line-height: 1.3;
   text-transform: uppercase;
   cursor: pointer;
-  white-space: nowrap;
+  white-space: pre-line; /* respects \n, centers each line */
+  text-align: center;
   text-decoration: none;
   transition: color 150ms, border-color 150ms, background 150ms;
 }
@@ -1027,8 +1028,9 @@ button:focus-visible, a:focus-visible {
 /* ─── Audio widget ──────────────────────────────────────────────── */
 .audio-widget {
   position: fixed;
-  top: 1.25rem;
-  left: 2rem;
+  top: 0;
+  left: 0;
+  padding: 0.65rem 1rem;
   z-index: 25; /* above footer */
   display: flex;
   align-items: center;
@@ -1077,10 +1079,9 @@ button:focus-visible, a:focus-visible {
 
 
 .doom-logo-corner {
-  flex-shrink: 0;
-  pointer-events: none;
   opacity: 0;
   transition: opacity 400ms ease;
+  display: block;
 }
 .doom-logo-corner.visible { opacity: 0.75; }
 .doom-logo-corner img {
@@ -1128,17 +1129,28 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  /* Single-row footer is ~52px; bottom pad just needs to clear it */
-  .result-scroll-inner { padding: 4.5rem 1.1rem 3.5rem; }
-  /* Compact single-row footer on mobile */
-  .app-footer { padding: 0.4rem 0.9rem; gap: 0.4rem; }
-  .footer-buer-logo { height: 28px; }
-  .footer-cta .btn-primary { font-size: 0.65rem; padding: 0.35rem 0.75rem; }
-  .btn-restart-link { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
-  .doom-logo-corner img { height: 32px; }
+  /* Mobile: dvh tracks browser-chrome shrink; --footer-h measured in px by JS */
+  .result-scroll-inner { height: calc(100dvh - var(--footer-h, 3.75rem)); padding: 4.5rem 1.1rem 4rem; }
+  /* background-attachment:fixed is broken on iOS Safari — revert to scroll */
+  #section-result { background-attachment: scroll; }
+  /* Compact footer — logos + buttons */
+  .app-footer { padding: 0.4rem 0.9rem; gap: 0.6rem; }
+  .footer-cta .btn-primary,
+  .btn-restart-link { font-size: 0.65rem; padding: 0.3rem 0.65rem; min-height: 46px; }
+  /* Shrink footer logos on mobile */
+  .doom-logo-corner img { height: 28px; }
+  .footer-buer-logo { height: 22px; }
   .result-wrapper { gap: 0.8rem; }
+  /* Fog: brighter + taller on mobile — harder to see on small screens */
+  .fog-bottom {
+    height: 42vh;
+    filter: blur(6px) saturate(1.4) sepia(0.15) brightness(1.5);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.85) 50%, black 70%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.85) 50%, black 70%);
+  }
+  .fog-bottom.fog-hero { opacity: 0.6; }
   /* Audio widget top-left — match mobile padding */
-  .audio-widget { top: 1rem; left: 1.1rem; }
+  .audio-widget { padding: 0.5rem 0.75rem; }
   /* Back button: below audio widget */
   .btn-back { top: 4rem; left: 1.1rem; }
   .result-rep-wrap { width: 90px; height: 90px; }
@@ -1169,7 +1181,7 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner {
     align-items: center;
     padding: 1.5rem 2rem 2.5rem;
-    height: calc(100% - 3.5rem); /* desktop footer is slightly shorter */
+    height: calc(100dvh - var(--footer-h, 4.5rem)); /* JS sets --footer-h */
   }
   .result-wrapper {
     gap: 0.65rem;
@@ -1374,18 +1386,13 @@ button:focus-visible, a:focus-visible {
 
 <!-- Footer: DOOM logo (left) · CTA (center, result only) · Buer logo (right) -->
 <footer class="app-footer" id="app-footer">
-  <!-- Left: 1490 DOOM logo, visible after hero -->
   <a class="doom-logo-corner" id="doom-logo-corner" href="https://buergames.com/pages/1490doom" target="_blank" rel="noopener noreferrer">
     <img src="Art/Logos/DOOMlogoOrange.png" alt="1490 Doom">
   </a>
-
-  <!-- Center: buy CTA (visible on result page only) -->
   <div class="footer-cta" id="footer-cta">
     <a id="result-link-2" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer"></a>
-    <button id="btn-restart" class="btn-restart-link">Seek Another Path</button>
+    <button id="btn-restart" class="btn-restart-link">Seek&#10;Another Path</button>
   </div>
-
-  <!-- Right: Buer Games logo -->
   <a href="https://buergames.com/" target="_blank" rel="noopener noreferrer" class="footer-buer-logo-link">
     <img class="footer-buer-logo" src="Art/Logos/BuerWhiteTextAndLogo.png" alt="Buer Games">
   </a>
@@ -1588,6 +1595,16 @@ const answerHistory = [];
 
 function resetScores() { COMPANIES.forEach(c => { state.scores[c.id] = 0; }); }
 
+// ── FOOTER HEIGHT → CSS VARIABLE ──────────────────────────────────
+// Measures the actual rendered footer height and writes it to --footer-h
+// so the result-scroll-inner always ends exactly at the footer top.
+function syncFooterHeight() {
+  const h = document.getElementById('app-footer').getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--footer-h', h + 'px');
+}
+syncFooterHeight();
+window.addEventListener('resize', syncFooterHeight);
+
 // ── UTILS ─────────────────────────────────────────────────────────
 
 function transitionTo(sectionId) {
@@ -1700,7 +1717,7 @@ function showResult() {
   const shortName = winner.name.replace(/^The /, '');
 
   document.getElementById('result-name').textContent = winner.name;
-  document.getElementById('result-link-2').textContent = 'Claim Your Company';
+  document.getElementById('result-link-2').textContent = 'Claim Your\nCompany';
   document.getElementById('result-tagline').textContent = winner.tagline;
   document.getElementById('mark-name').textContent = winner.markName;
   document.getElementById('mark-description').textContent = winner.markDescription;
