@@ -114,9 +114,9 @@ html, body {
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
-  filter: blur(2px) saturate(1.1) sepia(0.15);
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, black 100%);
+  filter: blur(3px) saturate(1.2) sepia(0.2);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 30%, black 70%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 30%, black 70%);
   opacity: 1;
   transition: opacity 600ms ease;
 }
@@ -460,7 +460,7 @@ button:focus-visible, a:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: calc(100% - 4.5rem); /* stop scroll track exactly at footer top */
+  height: 100%; /* padding-bottom handles footer clearance — no raw background strip */
   min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
                     expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
@@ -702,7 +702,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: row;
   flex: none;
   gap: 0;
-  padding: 0;
+  padding: 0.5rem 0 0; /* breathing room above the warrior images */
   background: transparent;
 }
 .section-label {
@@ -1038,8 +1038,9 @@ button:focus-visible, a:focus-visible {
 /* ─── Audio widget ──────────────────────────────────────────────── */
 .audio-widget {
   position: fixed;
-  top: 1.25rem;
-  left: 2rem;
+  top: 0;
+  left: 0;
+  padding: 0.65rem 1rem; /* matches .top-logos padding — vertically aligns with right-side logos */
   z-index: 25; /* above footer */
   display: flex;
   align-items: center;
@@ -1138,8 +1139,10 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  /* Bottom pad clears fixed footer buttons; top is minimal (logos are top-right, not full-width) */
-  .result-scroll-inner { padding: 1.5rem 1.1rem 3.5rem; }
+  /* Top clears audio widget (y=16, h=42 → needs ~68px); bottom clears footer buttons */
+  .result-scroll-inner { padding: 4.5rem 1.1rem 3.5rem; }
+  /* background-attachment:fixed is broken on iOS Safari — revert to scroll */
+  #section-result { background-attachment: scroll; }
   /* Compact footer — buttons only */
   .app-footer { padding: 0.4rem 0.9rem; }
   .footer-cta .btn-primary { font-size: 0.65rem; padding: 0.35rem 0.75rem; }
@@ -1150,7 +1153,7 @@ button:focus-visible, a:focus-visible {
   .footer-buer-logo { height: 22px; }
   .result-wrapper { gap: 0.8rem; }
   /* Audio widget top-left — match mobile padding */
-  .audio-widget { top: 1rem; left: 1.1rem; }
+  .audio-widget { padding: 0.5rem 0.75rem; } /* matches mobile .top-logos padding */
   /* Back button: below audio widget */
   .btn-back { top: 4rem; left: 1.1rem; }
   .result-rep-wrap { width: 90px; height: 90px; }
@@ -1181,7 +1184,7 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner {
     align-items: center;
     padding: 1.5rem 2rem 2.5rem;
-    height: calc(100% - 3.5rem); /* desktop footer is slightly shorter */
+    height: 100%;
   }
   .result-wrapper {
     gap: 0.65rem;
