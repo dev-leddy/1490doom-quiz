@@ -460,7 +460,7 @@ button:focus-visible, a:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: calc(100% - 4.5rem); /* stops at footer top; footer = 56px logo + 8px×2 padding = 72px = 4.5rem */
+  height: calc(100dvh - var(--footer-h, 4.5rem)); /* JS sets --footer-h to measured px value */
   min-height: 0; /* CRITICAL: flex items default to min-height:auto — without this, the item
                     expands to content height, parent clips it, and overflow-y never activates */
   overflow-y: auto;
@@ -1129,9 +1129,8 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 600px) {
   html, body { font-size: 16px; }
   .quiz-section { padding: 1.5rem 1.1rem; }
-  /* Mobile: dvh accounts for browser chrome (address bar) shrinking the viewport */
-  /* Footer on mobile = 46px buttons + 6.4px×2 padding ≈ 59px ≈ 3.75rem */
-  .result-scroll-inner { height: calc(100dvh - 3.75rem); padding: 4.5rem 1.1rem 4rem; }
+  /* Mobile: dvh tracks browser-chrome shrink; --footer-h measured in px by JS */
+  .result-scroll-inner { height: calc(100dvh - var(--footer-h, 3.75rem)); padding: 4.5rem 1.1rem 4rem; }
   /* background-attachment:fixed is broken on iOS Safari — revert to scroll */
   #section-result { background-attachment: scroll; }
   /* Compact footer — logos + buttons */
@@ -1174,7 +1173,7 @@ button:focus-visible, a:focus-visible {
   .result-scroll-inner {
     align-items: center;
     padding: 1.5rem 2rem 2.5rem;
-    height: calc(100% - 4.5rem); /* footer = 72px = 4.5rem at this breakpoint */
+    height: calc(100dvh - var(--footer-h, 4.5rem)); /* JS sets --footer-h */
   }
   .result-wrapper {
     gap: 0.65rem;
@@ -1587,6 +1586,16 @@ const state = { currentQuestion: 0, scores: {} };
 const answerHistory = [];
 
 function resetScores() { COMPANIES.forEach(c => { state.scores[c.id] = 0; }); }
+
+// ── FOOTER HEIGHT → CSS VARIABLE ──────────────────────────────────
+// Measures the actual rendered footer height and writes it to --footer-h
+// so the result-scroll-inner always ends exactly at the footer top.
+function syncFooterHeight() {
+  const h = document.getElementById('app-footer').getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--footer-h', h + 'px');
+}
+syncFooterHeight();
+window.addEventListener('resize', syncFooterHeight);
 
 // ── UTILS ─────────────────────────────────────────────────────────
 
