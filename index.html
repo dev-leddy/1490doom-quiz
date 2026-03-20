@@ -500,6 +500,18 @@ button:focus-visible, a:focus-visible {
   from { background-position: 0%    0%,   100%  100%; }
   to   { background-position: 200%  0%,  -150%  100%; }
 }
+/* Mask the fog vertically on non-mobile — prevents the PNG's hard top/bottom
+   edges from showing as visible lines at wider/taller viewports */
+@media (min-width: 601px) {
+  #section-result::after {
+    mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,0.7) 15%, black 28%,
+      black 72%, rgba(0,0,0,0.7) 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,0.7) 15%, black 28%,
+      black 72%, rgba(0,0,0,0.7) 85%, transparent 100%);
+  }
+}
 
 .result-wrapper {
   max-width: 960px;
@@ -891,10 +903,17 @@ button:focus-visible, a:focus-visible {
 }
 /* Clickable affordance on the mini-cards */
 .warrior-mini-card.zoomable { cursor: zoom-in; }
-.warrior-mini-card.zoomable img { transition: transform 180ms ease; }
+.warrior-mini-card.zoomable img { transition: transform 220ms ease; }
+.warrior-mini-card::after    { transition: opacity 220ms ease; }
 /* Only apply hover lift on real pointer devices — prevents sticky-hover on touch */
 @media (hover: hover) and (pointer: fine) {
-  .warrior-mini-card.zoomable:hover img { transform: scale(1.1) translateY(-4px); }
+  /* Float the warrior up, dissolve the bottom gradient + label so it reads as
+     a clean floating mini — no card chrome, just the model */
+  .warrior-card:hover .warrior-mini-card img {
+    transform: scale(1.32) translateY(-10px);
+  }
+  .warrior-card:hover .warrior-mini-card::after { opacity: 0; }
+  .warrior-card:hover .warrior-card-text       { opacity: 0; }
 }
 /* Touch tap feedback */
 .warrior-mini-card.zoomable:active img { transform: scale(0.97); }
@@ -905,6 +924,7 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
   gap: 0.15rem;
   text-align: center;
+  transition: opacity 220ms ease;
   position: relative;
   z-index: 6;
   overflow: hidden;
