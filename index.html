@@ -1999,6 +1999,22 @@ btnAudioMain.addEventListener('click', () => {
   howl.playing() ? howl.pause() : howl.play();
 });
 
+let pausedByVisibility = false;
+document.addEventListener('visibilitychange', () => {
+  if (!audioReady) return;
+  if (document.hidden) {
+    if (howl.playing()) {
+      howl.pause();
+      pausedByVisibility = true;
+    }
+  } else {
+    if (pausedByVisibility) {
+      howl.play();
+      pausedByVisibility = false;
+    }
+  }
+});
+
 // ── WARRIOR LIGHTBOX ─────────────────────────────────────────────
 (function () {
   const lb     = document.getElementById('warrior-lightbox');
