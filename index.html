@@ -1370,6 +1370,44 @@ button:focus-visible, a:focus-visible {
   }
   .result-wrapper { gap: 0.4rem; }
 }
+
+/* ── Portrait-only overlay for mobile landscape ───────────────────── */
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0a0a0a;
+  color: #fff;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-family: inherit;
+  text-align: center;
+  padding: 2rem;
+}
+#rotate-overlay svg {
+  width: 52px;
+  height: 52px;
+  opacity: 0.75;
+  animation: rotateHint 2s ease-in-out infinite;
+}
+@keyframes rotateHint {
+  0%, 100% { transform: rotate(0deg); }
+  40%       { transform: rotate(-90deg); }
+  60%       { transform: rotate(-90deg); }
+}
+#rotate-overlay p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+}
+/* Only show on narrow landscape (phones, not tablets/desktops) */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 900px) {
+  #rotate-overlay { display: flex; }
+}
 </style>
 </head>
 <body>
@@ -2034,5 +2072,13 @@ document.addEventListener('visibilitychange', () => {
 
 
 </script>
+
+<!-- Rotate-to-portrait overlay (shown on phone landscape via CSS) -->
+<div id="rotate-overlay" aria-live="polite" role="status">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 20.29 1.1 16 .1l.48 2.42zM5.5 18.48A10.45 10.45 0 0 1 1.55 11H.05C.56 17.16 5.71 22 12 22v-3l-4.5-2.5-.5 2h-.5v-.02zM7.52 7.52c1.56-1.56 3.61-2.35 5.69-2.35 1.52 0 3.04.44 4.35 1.32l-1.44 1.44L21 9.5V4l-1.69 1.69A9.41 9.41 0 0 0 13.2 3C10.6 3 8.01 4 6.1 5.9L4 8h2.69l.83-.48zM20 13h-2.31l-.83.48C15.44 14.96 13.39 15.75 11.31 15.75c-1.52 0-3.04-.44-4.35-1.32l1.44-1.44L3 11.5V17l1.69-1.69A9.41 9.41 0 0 0 10.8 17c2.6 0 5.19-1 7.1-2.9L20 12h-2l2 1z"/>
+  </svg>
+  <p>Please rotate your device to portrait mode</p>
+</div>
 </body>
 </html>
