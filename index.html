@@ -1201,18 +1201,6 @@ button:focus-visible, a:focus-visible {
 }
 
 /* Loading spinner inside main button */
-.audio-spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.15);
-  border-top-color: rgba(255,255,255,0.65);
-  border-radius: 50%;
-  animation: audioSpin 0.75s linear infinite;
-}
-@keyframes audioSpin {
-  to { transform: rotate(360deg); }
-}
-
 
 .doom-logo-corner {
   opacity: 0;
@@ -1382,6 +1370,44 @@ button:focus-visible, a:focus-visible {
   }
   .result-wrapper { gap: 0.4rem; }
 }
+
+/* ── Portrait-only overlay for mobile landscape ───────────────────── */
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0a0a0a;
+  color: #fff;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-family: inherit;
+  text-align: center;
+  padding: 2rem;
+}
+#rotate-overlay svg {
+  width: 52px;
+  height: 52px;
+  opacity: 0.75;
+  animation: rotateHint 2s ease-in-out infinite;
+}
+@keyframes rotateHint {
+  0%, 100% { transform: rotate(0deg); }
+  40%       { transform: rotate(-90deg); }
+  60%       { transform: rotate(-90deg); }
+}
+#rotate-overlay p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+}
+/* Only show on narrow landscape (phones, not tablets/desktops) */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 900px) {
+  #rotate-overlay { display: flex; }
+}
 </style>
 </head>
 <body>
@@ -1526,8 +1552,7 @@ button:focus-visible, a:focus-visible {
 <!-- Music widget — fixed top left, always present -->
 <div class="audio-widget" id="audio-widget">
 
-  <button id="btn-audio-main" class="audio-main-btn" aria-label="Play music">
-    <div class="audio-spinner" id="audio-spinner"></div>
+  <button id="btn-audio-main" class="audio-main-btn" aria-label="Play music" style="display:none">
     <svg id="icon-main-music" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
     <svg id="icon-main-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
     <svg id="icon-main-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -1563,7 +1588,7 @@ const COMPANIES = [
     markName: 'One final action when a warrior perishes',
     markDescription: "Death is not the end. It's the last chance to take one of them with you.",
     strategy: 'Deploy aggressively, make final actions count when warriors fall, accept casualties to secure victory.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Simple. Hit hard, die last.</span><br><br><strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
+    victoryPath: '<strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent. Simple. Hit hard, die last.</span><br><br><strong>High Ground</strong><br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
     url: 'https://buergames.com/products/the-graveborn-company'
   },
   {
@@ -1577,7 +1602,7 @@ const COMPANIES = [
     markName: 'One warrior uses 3 actions once per game',
     markDescription: 'Perfect coordination. When the moment comes, you move as one.',
     strategy: 'Strike fast and disengage, use traps to control movement, save 3-action burst for critical moments.',
-    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
+    victoryPath: '<strong>High Ground</strong><br><span class="vp-desc">Have the most models at the highest elevation at game end.</span><br><br><strong>Resourceful</strong><br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/the-silent-pact-complete-doom-company'
   },
   {
@@ -1585,13 +1610,13 @@ const COMPANIES = [
     name: 'The Tower Born',
     accent: '#4A6580', accentRgb: '74,101,128',
     rep: 'Art/Reps/Tower.png',
-    minis: ['Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Reaver.png'],
+    minis: ['Art/Warrior_Minis/Scout.png','Art/Warrior_Minis/Assassin.png','Art/Warrior_Minis/Sabotuer.png'],
     tagline: 'Raised in the stairwells of dead towers. Fear of falling left you long ago.',
-    warriors: 'Scout (The First to the Top) · Assassin (The High Strike) · Reaver (The Fearless Leap)',
+    warriors: 'Scout (The First to the Top) · Assassin (The High Strike) · Saboteur (The Chaos Architect)',
     markName: 'Roll two dice on Falling Damage, take lowest',
     markDescription: "The fall doesn't scare you. You were born in the heights.",
     strategy: 'Rush tallest structures, push enemies off aggressively, jump between structures fearlessly.',
-    victoryPath: '<strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest point on the board at game end. Get up. Stay up.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
+    victoryPath: '<strong>High Ground</strong><br><span class="vp-desc">Have the most models at the highest point on the board at game end. Get up. Stay up.</span><br><br><strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/the-tower-born-company'
   },
   {
@@ -1599,13 +1624,13 @@ const COMPANIES = [
     name: 'The Ashbound',
     accent: '#C97010', accentRgb: '201,112,16',
     rep: 'Art/Reps/Ash.png',
-    minis: ['Art/Warrior_Minis/Reaver.png','Art/Warrior_Minis/Executioner.png','Art/Warrior_Minis/Blacksmith.png'],
+    minis: ['Art/Warrior_Minis/WarriorPriest.png','Art/Warrior_Minis/Executioner.png','Art/Warrior_Minis/Blacksmith.png'],
     tagline: 'Lost something in the fire. Make the world remember where it burned.',
-    warriors: 'Reaver (The Fury Bound) · Executioner (Death in Sentence) · Blacksmith (The Equipment Master)',
+    warriors: 'Warrior Priest (Faith in the Fog) · Executioner (Death in Sentence) · Blacksmith (The Equipment Master)',
     markName: '+1 COMBAT within 2" of Hearth Token',
     markDescription: 'Place the Hearth where something was lost. Defend it to the death.',
     strategy: 'Force enemies to come to you, guard the Hearth strategically, fight on YOUR ground.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
+    victoryPath: '<strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent.</span><br><br><strong>Resourceful</strong><br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/the-ashbound-company'
   },
   {
@@ -1619,7 +1644,7 @@ const COMPANIES = [
     markName: '+1 SKILL and +1 DEFENSE at 2 or less VITALITY',
     markDescription: 'The more wounded you are, the harder you are to kill.',
     strategy: 'Accept damage early to activate bonuses, wounded Scavengers excel at caches, survive and outlast.',
-    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company. Even at death\'s door, you find a way.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
+    victoryPath: '<strong>Resourceful</strong><br><span class="vp-desc">Open more resource caches than any other company. Even at death\'s door, you find a way.</span><br><br><strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/the-wretched-survivors-company'
   },
   {
@@ -1633,7 +1658,7 @@ const COMPANIES = [
     markName: 'Debuff enemy (-1 COMBAT, -1 SKILL) when surrounded by 2+ warriors',
     markDescription: 'Surround them. Chant. Watch them crumble under the weight of your hymn.',
     strategy: 'Use swarm tactics to surround targets, activate debuffs, break enemy morale.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Surround them. Swarm. Outlast.</span><br><br><strong>High Ground</strong> · 2 VP<br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
+    victoryPath: '<strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent. Surround them. Swarm. Outlast.</span><br><br><strong>High Ground</strong><br><span class="vp-desc">Have the most models at the highest elevation at game end.</span>',
     url: 'https://buergames.com/products/the-doomed-choir-company'
   },
   {
@@ -1647,7 +1672,7 @@ const COMPANIES = [
     markName: '+1 DEFENSE first check each round on Ground Level',
     markDescription: 'Others fear the ground. You own it.',
     strategy: 'Fight on ground level, trap low-elevation chokepoints, counter vertical meta.',
-    victoryPath: '<strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent. Ground level is your domain — use it.</span><br><br><strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span>',
+    victoryPath: '<strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent. Ground level is your domain — use it.</span><br><br><strong>Resourceful</strong><br><span class="vp-desc">Open more resource caches than any other company.</span>',
     url: 'https://buergames.com/products/the-fog-walkers-company'
   },
   {
@@ -1661,7 +1686,7 @@ const COMPANIES = [
     markName: 'Roll two dice when opening caches, choose result',
     markDescription: 'You never get bad loot. The relics call to you.',
     strategy: 'Open all 3 caches, guaranteed good loot with double rolls, modify equipment.',
-    victoryPath: '<strong>Resourceful</strong> · 1 VP<br><span class="vp-desc">Open more resource caches than any other company.</span><br><br><strong>Attrition</strong> · 1 VP<br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
+    victoryPath: '<strong>Resourceful</strong><br><span class="vp-desc">Open more resource caches than any other company.</span><br><br><strong>Attrition</strong><br><span class="vp-desc">End the game with more warriors alive than your opponent.</span>',
     url: 'https://buergames.com/products/the-relic-bitten-company'
   }
 ];
@@ -1943,20 +1968,16 @@ document.querySelector('.fog-bottom').classList.add('fog-hero');
 
 // ── Audio widget (Howler.js) ──────────────────────────────────────
 const btnAudioMain  = document.getElementById('btn-audio-main');
-const audioSpinner  = document.getElementById('audio-spinner');
 const iconMainPlay  = document.getElementById('icon-main-play');
 const iconMainPause = document.getElementById('icon-main-pause');
 
 let audioReady = false;
 
 function setMainState(state) {
-  audioSpinner.style.display  = state === 'loading' ? '' : 'none';
+  btnAudioMain.style.display  = state === 'loading' ? 'none' : '';
   iconMainPlay.style.display  = state === 'paused'  ? '' : 'none';
   iconMainPause.style.display = state === 'playing' ? '' : 'none';
 }
-
-// Start spinner immediately
-setMainState('loading');
 
 const howl = new Howl({
   src:      ['music/track.mp3'],
@@ -1999,6 +2020,22 @@ btnAudioMain.addEventListener('click', () => {
   howl.playing() ? howl.pause() : howl.play();
 });
 
+let pausedByVisibility = false;
+document.addEventListener('visibilitychange', () => {
+  if (!audioReady) return;
+  if (document.hidden) {
+    if (howl.playing()) {
+      howl.pause();
+      pausedByVisibility = true;
+    }
+  } else {
+    if (pausedByVisibility) {
+      howl.play();
+      pausedByVisibility = false;
+    }
+  }
+});
+
 // ── WARRIOR LIGHTBOX ─────────────────────────────────────────────
 (function () {
   const lb     = document.getElementById('warrior-lightbox');
@@ -2035,5 +2072,13 @@ btnAudioMain.addEventListener('click', () => {
 
 
 </script>
+
+<!-- Rotate-to-portrait overlay (shown on phone landscape via CSS) -->
+<div id="rotate-overlay" aria-live="polite" role="status">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 20.29 1.1 16 .1l.48 2.42zM5.5 18.48A10.45 10.45 0 0 1 1.55 11H.05C.56 17.16 5.71 22 12 22v-3l-4.5-2.5-.5 2h-.5v-.02zM7.52 7.52c1.56-1.56 3.61-2.35 5.69-2.35 1.52 0 3.04.44 4.35 1.32l-1.44 1.44L21 9.5V4l-1.69 1.69A9.41 9.41 0 0 0 13.2 3C10.6 3 8.01 4 6.1 5.9L4 8h2.69l.83-.48zM20 13h-2.31l-.83.48C15.44 14.96 13.39 15.75 11.31 15.75c-1.52 0-3.04-.44-4.35-1.32l1.44-1.44L3 11.5V17l1.69-1.69A9.41 9.41 0 0 0 10.8 17c2.6 0 5.19-1 7.1-2.9L20 12h-2l2 1z"/>
+  </svg>
+  <p>Please rotate your device to portrait mode</p>
+</div>
 </body>
 </html>
