@@ -40,6 +40,8 @@ export default function QuizPage({ onComplete, onLightboxToggle }) {
   useEffect(() => {
     const urls = [
       '/quiz/Art/Bonus%20Art/Battlefield.webp',
+      '/quiz/Art/fog1.png',
+      '/quiz/Art/fog2.png',
       ...QUESTIONS.map(q => q.art).filter(Boolean),
       ...COMPANIES.flatMap(c => [...c.minis, c.rep].filter(Boolean)),
     ]
@@ -144,9 +146,6 @@ export default function QuizPage({ onComplete, onLightboxToggle }) {
       {/* Non-result footer */}
       {showFooterOnNonResult && (
         <footer className="qz-app-footer">
-          <p className="qz-footer-credits">
-            An Official 1490 DOOM Production &nbsp;·&nbsp; Buer Games<br />By Michael Leddy
-          </p>
           <div className="qz-footer-main">
             <a
               className={`qz-doom-logo-corner${engine.phase !== 'hero' ? ' visible' : ''}`}
@@ -156,7 +155,11 @@ export default function QuizPage({ onComplete, onLightboxToggle }) {
             >
               <img src="/quiz/Art/Logos/DOOMlogoOrange.webp" alt="1490 Doom" />
             </a>
-            <div className="qz-footer-cta" />
+            <div className="qz-footer-center">
+              <p className="qz-footer-credits">
+                An Official 1490 DOOM Production &nbsp;·&nbsp; Buer Games<br />By Michael Leddy
+              </p>
+            </div>
             <a
               href="https://buergames.com/"
               target="_blank"

@@ -180,7 +180,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2em 2em 7em;
+  padding: 2em 2em 4.5em;
   opacity: 0;
   transform: translateY(14px);
   pointer-events: none;
@@ -476,8 +476,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png'),
-    url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png');
+    url('/quiz/Art/fog1.png'),
+    url('/quiz/Art/fog2.png');
   background-size: 200% 100%, 250% 100%;
   background-position: 0% 0%, 100% 100%;
   background-repeat: repeat-x;
@@ -785,9 +785,7 @@
   bottom: 0; left: 0; right: 0;
   z-index: 20;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0;
   padding: 0.35em 1.5em 0.4em;
   background: transparent;
   transition: background 400ms ease;
@@ -798,7 +796,14 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
-/* Credits line — visible on hero/quiz, hidden on result */
+/* Credits — inline center of footer row on hero/quiz */
+.quiz-root .qz-footer-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
 .quiz-root .qz-footer-credits {
   font-family: var(--qz-font-display);
   font-size: 0.62em;
@@ -808,9 +813,7 @@
   text-align: center;
   margin: 0;
   line-height: 1.7;
-  padding-bottom: 0.2em;
 }
-.quiz-root .qz-app-footer.result-active .qz-footer-credits { display: none; }
 /* Credits that appear inside result scroll area */
 .quiz-root .qz-result-page-credits {
   font-family: var(--qz-font-display);
@@ -1086,7 +1089,7 @@
 @media (max-width: 600px) {
   .quiz-root { font-size: 16px; }
   .quiz-root .qz-btn-back { top: calc(42px + 1.1em); left: 0.75em; }
-  .quiz-root .qz-section { padding: 1.5em 1.1em 5.5em; }
+  .quiz-root .qz-section { padding: 1.5em 1.1em 3.5em; }
   .quiz-root .qz-result-scroll-inner { padding: 4.5em 1.1em 3.5em; }
   .quiz-root .qz-result-bottom-row { gap: 0; }
   .quiz-root .qz-result-bottom-card { flex-direction: column; }
@@ -1102,7 +1105,7 @@
 
 /* Footer mobile */
 @media (max-width: 680px) {
-  .quiz-root .qz-app-footer { padding: 0.25em 0.9em 0.3em; gap: 0; }
+  .quiz-root .qz-app-footer { padding: 0.25em 0.9em 0.3em; }
   .quiz-root .qz-footer-main { gap: 0.6em; }
   .quiz-root .qz-footer-credits { font-size: 0.56em; letter-spacing: 0.1em; }
   .quiz-root .qz-result-page-credits { font-size: 0.56em; }
