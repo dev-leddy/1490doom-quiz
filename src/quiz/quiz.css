@@ -180,7 +180,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2em;
+  padding: 2em 2em 7em;
   opacity: 0;
   transform: translateY(14px);
   pointer-events: none;
@@ -1086,7 +1086,7 @@
 @media (max-width: 600px) {
   .quiz-root { font-size: 16px; }
   .quiz-root .qz-btn-back { top: calc(42px + 1.1em); left: 0.75em; }
-  .quiz-root .qz-section { padding: 1.5em 1.1em; }
+  .quiz-root .qz-section { padding: 1.5em 1.1em 5.5em; }
   .quiz-root .qz-result-scroll-inner { padding: 4.5em 1.1em 3.5em; }
   .quiz-root .qz-result-bottom-row { gap: 0; }
   .quiz-root .qz-result-bottom-card { flex-direction: column; }
