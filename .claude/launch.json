@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "doom-quiz",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["D:/dev-led/1490doom-quiz/node_modules/vite/bin/vite.js"],
+      "port": 5173,
+      "autoPort": true
+    }
+  ]
+}
